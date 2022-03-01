@@ -25,15 +25,12 @@ public class VilaController : ControllerBase
 
 
     [HttpGet("Get")]
+    [Produces("application/json")]
     public IActionResult Get(int x, int y)
     {
         vila = new Vila();
         vila.LoadFromXY(x,y);
         Console.WriteLine("-> /Vila/Get: Após Load Vila");
         return Ok(vila.UpdateVila(x, y));
-    }
-
-
-
-  
+    }  
 }

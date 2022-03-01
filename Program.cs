@@ -43,7 +43,7 @@ app.UseSwaggerUI(options =>
 
 app.UseCors(x => x.AllowAnyHeader()
                  .AllowAnyMethod()
-                .SetIsOriginAllowed(origin => true)
+                  .SetIsOriginAllowed(origin => true)
                     );
 
 app.UseHttpsRedirection();

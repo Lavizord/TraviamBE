@@ -116,8 +116,9 @@ public class MapaController : ControllerBase
                 yMax = player.GetMaxCoordenadas("y"), 
                 mapa = jsonUtils.sqlDatoToJson(reader)
             };
-            //Console.WriteLine(myData.mapa);
-            
+            Console.WriteLine(jsonUtils.sqlDatoToJson(reader));
+            Console.WriteLine();
+            Console.WriteLine(myData.mapa);
             return new OkObjectResult(myData);
         }
         //return OK();
