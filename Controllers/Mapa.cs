@@ -88,7 +88,7 @@ public class MapaController : ControllerBase
     }
 
 
-    [HttpPost("Get")]
+    [HttpGet("Get")]
     public IActionResult Get()
     {
          string query  = 

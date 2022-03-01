@@ -29,7 +29,8 @@ public class PlayerController : ControllerBase
 
     [HttpGet("Get")]
     public IActionResult Get(String nome)
-    {
+    {   
+        Console.WriteLine(CONNECTION_STRING);
         player = new Player();
         player.LoadFrom("nome", nome);
         
