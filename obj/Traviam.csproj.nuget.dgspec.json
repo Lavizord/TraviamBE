@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Projetos\\Traviam\\Traviam.csproj": {}
+    "/Users/miguel/Desktop/dev/webdev/TraviamBE/Traviam.csproj": {}
   },
   "projects": {
-    "C:\\Projetos\\Traviam\\Traviam.csproj": {
+    "/Users/miguel/Desktop/dev/webdev/TraviamBE/Traviam.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Projetos\\Traviam\\Traviam.csproj",
+        "projectUniqueName": "/Users/miguel/Desktop/dev/webdev/TraviamBE/Traviam.csproj",
         "projectName": "Traviam",
-        "projectPath": "C:\\Projetos\\Traviam\\Traviam.csproj",
-        "packagesPath": "C:\\Users\\Pedro\\.nuget\\packages\\",
-        "outputPath": "C:\\Projetos\\Traviam\\obj\\",
+        "projectPath": "/Users/miguel/Desktop/dev/webdev/TraviamBE/Traviam.csproj",
+        "packagesPath": "/Users/miguel/.nuget/packages/",
+        "outputPath": "/Users/miguel/Desktop/dev/webdev/TraviamBE/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Pedro\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/Users/miguel/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
@@ -77,7 +77,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.101\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.101/RuntimeIdentifierGraph.json"
         }
       }
     }
