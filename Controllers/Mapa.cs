@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SQLite;
 using Newtonsoft.Json;
 
+
 using Traviam.Utils;
 using Traviam.GameLogic;
 
@@ -106,16 +107,14 @@ public class MapaController : ControllerBase
             SQLiteDataReader reader = command.ExecuteReader();
             JsonUtils jsonUtils = new JsonUtils();
             Player player = new Player();
-            Mapa mapaData = new Mapa
-                {
-                    xMax = 1,
-                    yMax = 1,
-                    mapa = jsonUtils.sqlDatoToJson(reader)
-                };
-            //Console.WriteLine(mapaData.mapa);
-            string json = JsonConvert.SerializeObject(mapaData, Formatting.Indented);
-      
-            return Ok(json + jsonUtils.sqlDatoToJson(reader));
+            var myData = new
+            {
+                xMax = player.GetMaxCoordenadas("x"),
+                yMax = player.GetMaxCoordenadas("y"), 
+                mapa = jsonUtils.sqlDatoToJson(reader)
+            };
+            Console.WriteLine(myData.mapa);
+            return new OkObjectResult(myData);
         }
         //return OK();
     }
@@ -160,6 +159,7 @@ public class MapaController : ControllerBase
             nTilesGerar--;
         }                                   
     }
+
 
 
     internal class Mapa

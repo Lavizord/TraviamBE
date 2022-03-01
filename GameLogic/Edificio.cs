@@ -198,12 +198,4 @@ public class Edificio
         return id;
     }
 
-
-    /*
-    SELECT id,Nome,Descricao,Level,PopMax,Hp,UpTime,CustoTrigo,CustoMadeira,CustoPedra,EdificiosLevel.Output,PlayerId,TileID  
-        FROM Edificios   
-        LEFT JOIN EdificiosLevel 
-            ON EdificiosLevel.Nome=Edificios.Nome and EdificiosLevel.Level=Edificios.Level    
-    */
-
 }

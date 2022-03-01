@@ -31,6 +31,7 @@ public class PlayerController : ControllerBase
     public IActionResult Get(String nome)
     {   
         Console.WriteLine(CONNECTION_STRING);
+        
         player = new Player();
         player.LoadFrom("nome", nome);
         
