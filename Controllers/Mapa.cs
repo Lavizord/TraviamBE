@@ -4,7 +4,7 @@ using System.Linq;
 using System.Data;
 using System.Data.SQLite;
 using Newtonsoft.Json;
-
+using System.Text.Json;
 
 using Traviam.Utils;
 using Traviam.GameLogic;
@@ -90,6 +90,7 @@ public class MapaController : ControllerBase
 
 
     [HttpGet("Get")]
+    [Produces("application/json")]
     public IActionResult Get()
     {
          string query  = 
@@ -105,15 +106,18 @@ public class MapaController : ControllerBase
             SQLiteCommand command = new SQLiteCommand(query, connection);
             connection.Open();
             SQLiteDataReader reader = command.ExecuteReader();
+
             JsonUtils jsonUtils = new JsonUtils();
             Player player = new Player();
+            
             var myData = new
             {
                 xMax = player.GetMaxCoordenadas("x"),
                 yMax = player.GetMaxCoordenadas("y"), 
                 mapa = jsonUtils.sqlDatoToJson(reader)
             };
-            Console.WriteLine(myData.mapa);
+            //Console.WriteLine(myData.mapa);
+            
             return new OkObjectResult(myData);
         }
         //return OK();
