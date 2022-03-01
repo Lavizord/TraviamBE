@@ -6,7 +6,7 @@ namespace Traviam.GameLogic;
 public class Edificio 
 { 
 
-    private const string CONNECTION_STRING = "Data Source=C:/Projetos/Traviam/Database/TraviamDB.db; UseUTF16Encoding=True";
+    private const string CONNECTION_STRING = ConnectionStrings.CONNECTION_STRING;
     public Int32 id { get; set; }
     public string nome { get; set; }
     public string descricao { get; set; } 

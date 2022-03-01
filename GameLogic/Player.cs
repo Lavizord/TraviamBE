@@ -12,7 +12,7 @@ public class Player
     public string nome { get; set; } = String.Empty;
     public DateTime DtCriacao { get; set; }
 
-    private const string CONNECTION_STRING = "Data Source=C:/Projetos/Traviam/Database/TraviamDB.db; UseUTF16Encoding=True";
+    private const string CONNECTION_STRING = ConnectionStrings.CONNECTION_STRING;
 
     public void LoadFrom(string tipoLoad, string fieldProcurar)
     {

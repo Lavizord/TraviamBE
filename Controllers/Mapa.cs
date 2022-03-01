@@ -14,7 +14,7 @@ namespace Traviam.Controllers;
 [Route("[controller]")]
 public class MapaController : ControllerBase
 {
-    private const string CONNECTION_STRING = "Data Source=C:/Projetos/Traviam/Database/TraviamDB.db; UseUTF16Encoding=True";
+    private const string CONNECTION_STRING = ConnectionStrings.CONNECTION_STRING;
 
 
     private readonly ILogger<MapaController> _logger;

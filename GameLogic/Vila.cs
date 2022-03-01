@@ -5,7 +5,7 @@ namespace Traviam.GameLogic;
 
 public class Vila
 {
-    private const string CONNECTION_STRING = "Data Source=C:/Projetos/Traviam/Database/TraviamDB.db; UseUTF16Encoding=True";
+    private const string CONNECTION_STRING = ConnectionStrings.CONNECTION_STRING;
     
     public int id = 0;
     public string tipo = String.Empty;

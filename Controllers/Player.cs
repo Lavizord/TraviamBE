@@ -6,6 +6,7 @@ using System.Data.SQLite;
 using System.Text.Json;
 
 using Traviam.GameLogic;
+using Traviam.Utils;
 
 namespace Traviam.Controllers;
 
@@ -13,7 +14,7 @@ namespace Traviam.Controllers;
 [Route("[controller]")]
 public class PlayerController : ControllerBase
 {
-    private const string CONNECTION_STRING = "Data Source=C:/Projetos/Traviam/Database/TraviamDB.db; UseUTF16Encoding=True";
+    private const string CONNECTION_STRING = ConnectionStrings.CONNECTION_STRING;
 
     private Player player;
     private Vila vila;
