@@ -1,11 +1,13 @@
 using System.Data.SQLite;
+using System.Text.Json.Serialization;
+
 using Traviam.Utils;
 
 namespace Traviam.GameLogic;
 
 public class Vila
 {
-    private const string CONNECTION_STRING = ConnectionStrings.CONNECTION_STRING;
+    private static string CONNECTION_STRING = Utils.ConnectionStrings.GetDBConnString();
     
     public int id = 0;
     public string tipo = String.Empty;
@@ -18,8 +20,8 @@ public class Vila
     public int nTilesTrigo = 0;
     public int nTilesMadeira = 0;
     public int nTilesPedra = 0;
-    public DateTime DtAtribuicao;
-    public DateTime DtUltAct;
+    [JsonIgnore] public DateTime DtAtribuicao;
+    [JsonIgnore] public DateTime DtUltAct;
 
     /*
         TODO / NOTAS

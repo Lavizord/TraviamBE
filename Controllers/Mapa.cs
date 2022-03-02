@@ -15,7 +15,7 @@ namespace Traviam.Controllers;
 [Route("[controller]")]
 public class MapaController : ControllerBase
 {
-    private const string CONNECTION_STRING = ConnectionStrings.CONNECTION_STRING;
+    private string CONNECTION_STRING = Utils.ConnectionStrings.GetDBConnString();
 
 
     private readonly ILogger<MapaController> _logger;
@@ -29,9 +29,9 @@ public class MapaController : ControllerBase
 
 
     [HttpPost("Cria")]
-    public IActionResult  Cria(int x, int y)
+    public IActionResult  Cria(int gridSize)
     {
-        Int32 numTotalTiles = x * y;
+        Int32 numTotalTiles = gridSize * gridSize;
         string getGeradorTiles  = 
                 @"
                     SELECT PercentTiles, TipoTile, NumTrigo, NumMadeira, NumPedra 
@@ -59,8 +59,8 @@ public class MapaController : ControllerBase
         int countX, countY, id, idT,xMax, yMax;
         id = 1;
         idT= 0;
-        xMax = x ;
-        yMax = y ;
+        xMax = gridSize ;
+        yMax = gridSize ;
 
         for ( countX = 0; countX < xMax; countX++ ) {
             for (  countY = 0; countY < yMax; countY++ ) {
@@ -97,6 +97,7 @@ public class MapaController : ControllerBase
                     @"
                         SELECT id, TipoTile, PlayerId, PosX, PosY, NumTTrigo, NumTPedra, NumTMadeira 
                         FROM TilesMapa
+                        ORDER by PosY DESC,posx asc 
                     ";
 
         string map = String.Empty;
@@ -108,17 +109,13 @@ public class MapaController : ControllerBase
             SQLiteDataReader reader = command.ExecuteReader();
 
             JsonUtils jsonUtils = new JsonUtils();
-            Player player = new Player();
-            
+  
             var myData = new
             {
-                xMax = player.GetMaxCoordenadas("x"),
-                yMax = player.GetMaxCoordenadas("y"), 
+                xMax = GameLogic.Mapa.GetMaxCoordenadas("x"),
+                yMax = GameLogic.Mapa.GetMaxCoordenadas("y"), 
                 mapa = jsonUtils.sqlDatoToJson(reader)
             };
-            Console.WriteLine(jsonUtils.sqlDatoToJson(reader));
-            Console.WriteLine();
-            Console.WriteLine(myData.mapa);
             return new OkObjectResult(myData);
         }
         //return OK();

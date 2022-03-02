@@ -14,7 +14,7 @@ namespace Traviam.Controllers;
 [Route("[controller]")]
 public class EdificiosController : ControllerBase
 {
-    private const string CONNECTION_STRING = ConnectionStrings.CONNECTION_STRING;
+    private string CONNECTION_STRING = Utils.ConnectionStrings.GetDBConnString();
     
 
     private Edificio edificio;

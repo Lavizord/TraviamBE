@@ -1,4 +1,5 @@
 using System.Data.SQLite;
+using System.Text.Json.Serialization;
 
 using Traviam.Utils;
 
@@ -6,7 +7,7 @@ namespace Traviam.GameLogic;
 public class Edificio 
 { 
 
-    private const string CONNECTION_STRING = ConnectionStrings.CONNECTION_STRING;
+    private static string CONNECTION_STRING = Utils.ConnectionStrings.GetDBConnString();
     public Int32 id { get; set; }
     public string nome { get; set; }
     public string descricao { get; set; } 
@@ -19,9 +20,9 @@ public class Edificio
     public Int32 output { get; set; } 
     public Int32 playerid { get; set; } 
     public Int32 tileid { get; set; } 
-    public DateTime DtUpgrade { get; set; } 
-    public DateTime DtCriacao { get; set; } 
     public bool isBuilding { get; set; }
+    [JsonIgnore] public DateTime DtUpgrade { get; set; } 
+    [JsonIgnore] public DateTime DtCriacao { get; set; } 
 
     public void LoadFrom(string tipoLoad, string fieldProcurar) //Edificio.LoadFrom("id", 2)
     {

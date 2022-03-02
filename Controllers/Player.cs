@@ -14,7 +14,8 @@ namespace Traviam.Controllers;
 [Route("[controller]")]
 public class PlayerController : ControllerBase
 {
-    private const string CONNECTION_STRING = ConnectionStrings.CONNECTION_STRING;
+
+    private string CONNECTION_STRING = Utils.ConnectionStrings.GetDBConnString();
 
     private Player player;
     private Vila vila;
@@ -27,48 +28,41 @@ public class PlayerController : ControllerBase
         _logger = logger;
     }
 
+
     [HttpGet("Get")]
+    [Produces("application/json")]
     public IActionResult Get(String nome)
-    {   
-        Console.WriteLine(CONNECTION_STRING);
-        
+    {         
         player = new Player();
-        player.LoadFrom("nome", nome);
-        
-        string jsonString = JsonSerializer.Serialize(player);
-        Console.WriteLine(jsonString);
-        
+        player.LoadFromString("nome", nome);
+                
         return Ok(JsonSerializer.Serialize(player));
     }
     
+
     [HttpPut("Cria")]
+    [Produces("application/json")]
     public IActionResult Cria(String nome)
     {
         player = new Player();
         player.GeraId();
         player.GeraCoordenada(1f, "x");
         player.GeraCoordenada(1f, "y");
-        Console.WriteLine(String.Format("X gerado:{0}, Y gerado:{1}", player.CapitalX, player.CapitalY));
-        player.Grava();
+        player.GravaDados();
         player.AtribuiTile();
 
         vila      = new Vila();
         vila.LoadFromXY(player.CapitalX, player.CapitalY);
-        Console.WriteLine("Após load da Villa de X.Y");
 
         edificio  = new Edificio();
-        
         edificio.CriaEdificio("Centro da Vila", vila.id, player.id);
-        Console.WriteLine("Após Criar Edificio [Centro da Vila]");
-        
         edificio.CriaEdificio("Quinta", vila.id, player.id);
-        Console.WriteLine("Após Criar Edificio [Quinta]");
-       
         edificio.CriaEdificio("Floresta", vila.id, player.id);
-
         edificio.CriaEdificio("Pedreira", vila.id, player.id);
-        Console.WriteLine("Após Criar Edificio [Pedreira]");
-        return Ok();
+
+        player.LoadFromInt("id", player.id); // dar reload ao player antes de o enviar.
+
+        return Ok(JsonSerializer.Serialize(player));
     }
 }
 
