@@ -21,6 +21,10 @@ public class Edificio
     public Int32 playerid { get; set; } 
     public Int32 tileid { get; set; } 
     public bool isBuilding { get; set; }
+    
+    public Int32 postilex { get; set; }
+    public Int32 postiley { get; set; }
+
     [JsonIgnore] public DateTime DtUpgrade { get; set; } 
     [JsonIgnore] public DateTime DtCriacao { get; set; } 
 
@@ -33,7 +37,7 @@ public class Edificio
             SELECT Edificios.Id, Edificios.Nome, Edificios.Descricao, Edificios.DtCriacao, 
                     Edificios.Level, EdificiosLevel.PopMax, Edificios.Hp, Edificios.DtUpgrade,
                     Edificios.CustoTrigo, Edificios.CustoMadeira, Edificios.CustoPedra, EdificiosLevel.Output,
-                    Edificios.PlayerId, Edificios.TileID, Edificios.isBuilding
+                    Edificios.PlayerId, Edificios.TileID, Edificios.isBuilding, Edificios.PosTileX, Edificios.PosTileY
             FROM Edificios 
             LEFT JOIN EdificiosLevel on EdificiosLevel.Nome=Edificios.Nome and EdificiosLevel.Level=Edificios.Level 
             WHERE {0}={1}
@@ -60,13 +64,15 @@ public class Edificio
                 this.playerid = (Int32)(reader.GetDouble(12));
                 this.tileid = (Int32)(reader.GetDouble(13));
                 this.isBuilding = (reader.GetBoolean(14));
+                this.postilex = (Int32)(reader.GetDouble(15));
+                this.postiley = (Int32)(reader.GetDouble(16));
                 break; // (if you only want the first item returned)
             }
             reader.Close();
         }
     }
 
-    public void CriaEdificio(string nome, int tileID, int pId)
+    public void CriaEdificio(string nome, int tileID, int pId, int posX, int posY)
     {
         this.id = GeraId();   
         this.level = 1; 
@@ -108,6 +114,8 @@ public class Edificio
                  Console.WriteLine(this.tileid);
                 this.DtCriacao = (DateTime)(reader.GetDateTime(9)); 
                 this.DtUpgrade = (DateTime)(reader.GetDateTime(9));
+                this.postilex = posX;
+                this.postiley = posY;
 
                 break; // (if you only want the first item returned)
             }
@@ -126,11 +134,11 @@ public class Edificio
             sql_cmd.CommandText = @"INSERT INTO edificios 
                                     (id, nome, descricao, level, hp,
                                     CustoTrigo, CustoMadeira, CustoPedra, PlayerId, TileID, DtUpgrade, 
-                                    DtCriacao, isBuilding)
+                                    DtCriacao, isBuilding, PosTileX, PosTileY)
                                     VALUES 
                                     (@Id, @nome, @descricao, @level, @hp,
                                     @CustoTrigo, @CustoMadeira, @CustoPedra, @PlayerId,
-                                    @TileID, @DtUpgrade, @DtCriacao, @isBuilding)";
+                                    @TileID, @DtUpgrade, @DtCriacao, @isBuilding, @x, @y)";
 
             sql_cmd.Parameters.AddWithValue("@Id", this.id);
             sql_cmd.Parameters.AddWithValue("@nome", this.nome);
@@ -144,7 +152,9 @@ public class Edificio
             sql_cmd.Parameters.AddWithValue("@TileId", this.tileid);
             sql_cmd.Parameters.AddWithValue("@DtUpgrade", this.DtUpgrade);
             sql_cmd.Parameters.AddWithValue("@DtCriacao", this.DtCriacao);
-            sql_cmd.Parameters.AddWithValue("isBuilding", this.isBuilding);
+            sql_cmd.Parameters.AddWithValue("@isBuilding", this.isBuilding);
+            sql_cmd.Parameters.AddWithValue("@x", this.postilex);
+            sql_cmd.Parameters.AddWithValue("@y", this.postiley);
 
             sql_cmd.ExecuteNonQuery();
             connection.Close();

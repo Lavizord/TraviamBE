@@ -46,10 +46,10 @@ public class EdificiosController : ControllerBase
 
 
     [HttpPatch("Cria")]
-    public IActionResult Cria(int tileId, int playerID, String nome)
+    public IActionResult Cria(int tileId, int playerID, String nome, int x,int y)
     {
         edificio = new Edificio();
-        edificio.CriaEdificio(nome, tileId, playerID);
+        edificio.CriaEdificio(nome, tileId, playerID, x, y); 
         return Ok();
     }
 

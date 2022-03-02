@@ -112,8 +112,8 @@ public class MapaController : ControllerBase
   
             var myData = new
             {
-                xMax = GameLogic.Mapa.GetMaxCoordenadas("x"),
-                yMax = GameLogic.Mapa.GetMaxCoordenadas("y"), 
+                xMax = GameLogic.Mapa.GetMaxCoordenadas("x") + 1,
+                yMax = GameLogic.Mapa.GetMaxCoordenadas("y") + 1, 
                 mapa = jsonUtils.sqlDatoToJson(reader)
             };
             return new OkObjectResult(myData);

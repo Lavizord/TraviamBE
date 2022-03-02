@@ -88,7 +88,6 @@
 /Users/miguel/Desktop/dev/webdev/TraviamBE/obj/Debug/net6.0/Traviam.genruntimeconfig.cache
 C:\Projetos\Traviam\bin\Debug\net6.0\appsettings.Development.json
 C:\Projetos\Traviam\bin\Debug\net6.0\appsettings.json
-C:\Projetos\Traviam\bin\Debug\net6.0\Database\map.json
 C:\Projetos\Traviam\bin\Debug\net6.0\Traviam.exe
 C:\Projetos\Traviam\bin\Debug\net6.0\Traviam.deps.json
 C:\Projetos\Traviam\bin\Debug\net6.0\Traviam.runtimeconfig.json

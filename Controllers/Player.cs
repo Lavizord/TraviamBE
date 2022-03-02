@@ -34,8 +34,12 @@ public class PlayerController : ControllerBase
     public IActionResult Get(String nome)
     {         
         player = new Player();
-        player.LoadFromString("nome", nome);
-                
+        player.LoadFromNome(nome);
+        Console.WriteLine();
+        Console.WriteLine(player.nome);
+        Console.WriteLine(player.DtCriacao);
+        Console.WriteLine(JsonSerializer.Serialize(player));
+        Console.WriteLine();
         return Ok(JsonSerializer.Serialize(player));
     }
     
@@ -45,7 +49,7 @@ public class PlayerController : ControllerBase
     public IActionResult Cria(String nome)
     {
         player = new Player();
-        player.GeraId();
+        player.Init(nome);
         player.GeraCoordenada(1f, "x");
         player.GeraCoordenada(1f, "y");
         player.GravaDados();
@@ -55,12 +59,12 @@ public class PlayerController : ControllerBase
         vila.LoadFromXY(player.CapitalX, player.CapitalY);
 
         edificio  = new Edificio();
-        edificio.CriaEdificio("Centro da Vila", vila.id, player.id);
-        edificio.CriaEdificio("Quinta", vila.id, player.id);
-        edificio.CriaEdificio("Floresta", vila.id, player.id);
-        edificio.CriaEdificio("Pedreira", vila.id, player.id);
+        edificio.CriaEdificio("Centro da Vila", vila.id, player.id, 0, 0);
+        edificio.CriaEdificio("Quinta", vila.id, player.id, 2, 2);
+        edificio.CriaEdificio("Floresta", vila.id, player.id, 5, 4);
+        edificio.CriaEdificio("Pedreira", vila.id, player.id, 1, 4);
 
-        player.LoadFromInt("id", player.id); // dar reload ao player antes de o enviar.
+        //player.LoadFromInt("id", player.id); // dar reload ao player antes de o enviar.
 
         return Ok(JsonSerializer.Serialize(player));
     }

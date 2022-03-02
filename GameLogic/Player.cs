@@ -10,31 +10,39 @@ public class Player
     public Int32 id { get; set; }
     public Int32 CapitalX { get; set; }
     public Int32 CapitalY { get; set; }
-    public string nome { get; set; } = String.Empty;
+    public string nome { get; set; }
     [JsonIgnore] public DateTime DtCriacao { get; set; }
 
     //private const string CONNECTION_STRING = ConnectionStrings.CONNECTION_STRING;
     private string CONNECTION_STRING = Utils.ConnectionStrings.GetDBConnString();
 
-    public void LoadFromString(string collname, string fieldProcurar)//Carrega Objeto com dados da BD já existentes
-    {
-        Console.WriteLine(Utils.ConnectionStrings.GetDBConnString());
+    public void LoadFromNome(string nome)//Carrega Objeto com dados da BD já existentes
+    {   
+        Console.WriteLine();
+        Console.WriteLine("--> Inicio LoadFrom");
+        Console.WriteLine();
 
         //NOTA: Apenas preparado para dar por uma string
         using (SQLiteConnection connection = new SQLiteConnection(CONNECTION_STRING))
         {
-            connection.Open();
-            SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = @"SELECT id, nome, DtCriacao, CapitalX, CapitalY
+            Console.WriteLine();
+            Console.WriteLine("----> USING sliteconnection");
+            Console.WriteLine();
+            string query = @"SELECT id, nome, DtCriacao, CapitalX, CapitalY
                                     FROM Players 
-                                    WHERE @collname=@valuestring";
-
-            command.Parameters.AddWithValue("@collname", collname);
-            command.Parameters.AddWithValue("@valuestring", fieldProcurar);
-
+                                    WHERE nome = @valuestring;";
+            connection.Open();
+            SQLiteCommand command = new SQLiteCommand(query, connection);
+            command.Parameters.AddWithValue("@valuestring", nome);
+            command.Prepare();
             SQLiteDataReader reader = command.ExecuteReader();
+            Console.WriteLine("      Query Returnou Valores? "+reader.HasRows.ToString());
             while (reader.Read())
             {
+                Console.WriteLine();
+                Console.WriteLine("------> READING SELECT Players");
+                Console.WriteLine();
+                Console.WriteLine("SELECT ID:="+(reader.GetDouble(0).ToString()));
                 this.id = (Int32)(reader.GetDouble(0));
                 this.CapitalX = (Int32)(reader.GetDouble(3));
                 this.CapitalY = (Int32)(reader.GetDouble(4));
@@ -44,34 +52,46 @@ public class Player
             }
             reader.Close();
         }
+
     }
     
-    public void LoadFromInt(string collname, int fieldProcurar)//Carrega Objeto com dados da BD já existentes
-    {
-        //NOTA: Apenas preparado para dar por uma int
+    public void LoadFromId(int id)//Carrega Objeto com dados da BD já existentes
+    {   
+        Console.WriteLine();
+        Console.WriteLine("--> Inicio LoadFrom");
+        Console.WriteLine();
+
+        //NOTA: Apenas preparado para dar por uma string
         using (SQLiteConnection connection = new SQLiteConnection(CONNECTION_STRING))
         {
-            connection.Open();
-            SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = @"SELECT id, nome, DtCriacao, CapitalX, CapitalY
+            Console.WriteLine();
+            Console.WriteLine("----> USING sliteconnection");
+            Console.WriteLine();
+            string query = @"SELECT id, nome, DtCriacao, CapitalX, CapitalY
                                     FROM Players 
-                                    WHERE @collname=@valueint";
-
-            command.Parameters.AddWithValue("@collname", collname);
-            command.Parameters.AddWithValue("@valueint", fieldProcurar);
-
+                                    WHERE id = @id;";
+            connection.Open();
+            SQLiteCommand command = new SQLiteCommand(query, connection);
+            command.Parameters.AddWithValue("@id", id);
+            command.Prepare();
             SQLiteDataReader reader = command.ExecuteReader();
+            Console.WriteLine("      Query Returnou Valores? "+reader.HasRows.ToString());
             while (reader.Read())
             {
-                this.id       = (Int32)(reader.GetDouble(0));
-                this.nome     = reader.GetValue(1).ToString();
+                Console.WriteLine();
+                Console.WriteLine("------> READING SELECT Players");
+                Console.WriteLine();
+                Console.WriteLine("SELECT ID:="+(reader.GetDouble(0).ToString()));
+                this.id = (Int32)(reader.GetDouble(0));
                 this.CapitalX = (Int32)(reader.GetDouble(3));
                 this.CapitalY = (Int32)(reader.GetDouble(4));
+                this.nome = reader.GetValue(1).ToString();
                 this.DtCriacao = (DateTime)(reader.GetDateTime(2)); 
                 break; // (if you only want the first item returned)
             }
             reader.Close();
         }
+
     }
 
     public void GeraCoordenada(float seed, string coordenada)//Altera CapitalX e Y do objeto para umas Novas
@@ -99,7 +119,7 @@ public class Player
         }      
     }
 
-    public void GeraId() //Altera ID do objeto para um novo disponível na BD.
+    public void Init(string nome) //Altera ID do objeto para um novo disponível na BD.
     {
         using (SQLiteConnection connection = new SQLiteConnection(CONNECTION_STRING))
         {   
@@ -116,6 +136,7 @@ public class Player
             reader.Close();
         }
         this.id ++;
+        this.nome = nome;
     }
 
     public void GravaDados() //Faz o insert inicial dos dados no jogador, tendo sido o obj previament criado.
@@ -127,7 +148,7 @@ public class Player
             sql_cmd.CommandText = @" INSERT INTO Players (id, Nome, DtCriacao, CapitalX, CapitalY)
                                     VALUES (@Id, @nome, DATETIME(), @x, @y) ";
             sql_cmd.Parameters.AddWithValue("@Id", this.id);
-            sql_cmd.Parameters.AddWithValue("@nome", this.id);
+            sql_cmd.Parameters.AddWithValue("@nome", this.nome);
             sql_cmd.Parameters.AddWithValue("@x", this.CapitalX);
             sql_cmd.Parameters.AddWithValue("@y", this.CapitalY);
             Console.WriteLine(sql_cmd.CommandText);
