@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Data.SQLite;
+using System.Text.Json;
+
 using Traviam.Utils;
 using Traviam.GameLogic;
 
@@ -14,6 +16,8 @@ public class VilaController : ControllerBase
     private string CONNECTION_STRING = Utils.ConnectionStrings.GetDBConnString();
     
     private Vila vila;
+
+    private Edificio edificio;
 
     private readonly ILogger<VilaController> _logger;
 
@@ -34,6 +38,7 @@ public class VilaController : ControllerBase
         return Ok(vila.UpdateVila());
     }  
     
+
     [HttpGet("GetById")]
     [Produces("application/json")]
     public IActionResult GetById(int id)
@@ -43,4 +48,19 @@ public class VilaController : ControllerBase
         Console.WriteLine("-> /Vila/Get: Após Load Vila");
         return Ok(vila.UpdateVila());
     }  
+
+
+    [HttpGet("GetBuildingTileInfo")]
+    [Produces("application/json")]
+    public IActionResult GetBuildingTileInfo(int vilaId, int posVilaX, int posVilaY)
+    {
+        edificio = new Edificio();
+        if(edificio.LoadFromIdXY(vilaId, posVilaX, posVilaY))
+        {
+            Console.WriteLine(":::: Foi Encontrado um edificios.");
+           return Ok(edificio);
+        }
+        
+        return  Ok(JsonSerializer.Serialize(DbHelper.GetPossiveisEdificios(vilaId, posVilaX, posVilaY)));
+    }
 }

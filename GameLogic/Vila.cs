@@ -66,40 +66,55 @@ public class Vila
             Console.WriteLine();
             Console.WriteLine("----> USING sliteconnection");
             Console.WriteLine();
-            string query  =  
-            @"
-                SELECT id, TipoTile, PlayerId, PosX, PosY, Madeira, Pedra, Trigo, DtUltAct, DtAtribuicao,
-                        NumTTrigo, NumTPedra, NumTMadeira 
-                FROM TilesMapa 
-                WHERE id=@id
-            ";
+            string query  =  @" 
+                        SELECT id, TipoTile, PlayerId, PosX, PosY, 
+                            Madeira, Pedra, Trigo, DtUltAct, DtAtribuicao,
+                            NumTTrigo, NumTPedra, NumTMadeira 
+                        FROM TilesMapa 
+                        WHERE id = @id";
+
 
             connection.Open();
             SQLiteCommand command = new SQLiteCommand(query, connection);
             command.Parameters.AddWithValue("@id", id);
             command.Prepare();
             SQLiteDataReader reader = command.ExecuteReader();
-             Console.WriteLine("      Query Returnou Valores? "+reader.HasRows.ToString());
+            Console.WriteLine("      Query Returnou Valores? "+reader.HasRows.ToString());
             while (reader.Read())
             {
                 Console.WriteLine();
                 Console.WriteLine("------> READING SELECT Vila");
                 Console.WriteLine();
 
+                Console.WriteLine();
+                Console.WriteLine("------> READING SELECT Players");
+                Console.WriteLine();
                 this.id      = (Int32)(reader.GetDouble(0));
+                Console.WriteLine(1);
                 this.tipo    = reader.GetString(1);
+                Console.WriteLine(2);
                 this.PlayerID = DbHelper.SafeGetInt(reader, 2);
+                Console.WriteLine(3);
                 this.x       = (Int32)(reader.GetDouble(3));
+                Console.WriteLine(4);
                 this.y       = (Int32)(reader.GetDouble(4)); 
+                Console.WriteLine(5);
                 this.madeira = DbHelper.SafeGetInt(reader, 5);
+                Console.WriteLine(6);
                 this.pedra   = DbHelper.SafeGetInt(reader, 6);
+                Console.WriteLine(7);
                 this.trigo   = DbHelper.SafeGetInt(reader, 7);
-                this.nTilesTrigo = (Int32)(reader.GetDouble(8));
-                this.nTilesMadeira = (Int32)(reader.GetDouble(9));
-                this.nTilesPedra = (Int32)(reader.GetDouble(10));
+                Console.WriteLine(8);
+                this.nTilesTrigo = (Int32)(reader.GetDouble(10));
+                Console.WriteLine(9);
+                this.nTilesMadeira = (Int32)(reader.GetDouble(11));
+                Console.WriteLine(10);
+                this.nTilesPedra = (Int32)(reader.GetDouble(12));
+                Console.WriteLine(11);
                 this.DtUltAct = (DateTime)(reader.GetDateTime(8));
-                //this.DtAtribuicao = (DateTime)(reader.GetDateTime(9));
-                break; // (if you only want the first item returned)
+                Console.WriteLine(12);
+                this.DtAtribuicao = (DateTime)(reader.GetDateTime(9));
+                break;
             }
             reader.Close();
         }
@@ -141,14 +156,14 @@ public class Vila
                 this.PlayerID = DbHelper.SafeGetInt(reader, 2);
                 this.x       = (Int32)(reader.GetDouble(3));
                 this.y       = (Int32)(reader.GetDouble(4)); 
-                this.madeira = (Int32)(reader.GetDouble(5));
-                this.pedra   = (Int32)(reader.GetDouble(6));
-                this.trigo   = (Int32)(reader.GetDouble(7));
+                this.madeira = DbHelper.SafeGetInt(reader, 5);
+                this.pedra   = DbHelper.SafeGetInt(reader, 6);
+                this.trigo   = DbHelper.SafeGetInt(reader, 7);
                 this.nTilesTrigo = (Int32)(reader.GetDouble(10));
                 this.nTilesMadeira = (Int32)(reader.GetDouble(11));
                 this.nTilesPedra = (Int32)(reader.GetDouble(12));
                 this.DtUltAct = (DateTime)(reader.GetDateTime(8));
-                this.DtAtribuicao = (DateTime)(reader.GetDateTime(9));
+                this.DtAtribuicao = DbHelper.SafeGetDatetime(reader, 9);
                 break; // (if you only want the first item returned)
             }
             reader.Close();
@@ -208,8 +223,8 @@ public class Vila
                     TilesMapa.ID = {0} AND
                     Edificios.Nome = 'Floresta'
             ) as SumMadeira", this.id);
-        Console.WriteLine("Query Recursos Atualizar:");
-        Console.WriteLine(querySomasRecursos);
+        //Console.WriteLine("Query Recursos Atualizar:");
+        //Console.WriteLine(querySomasRecursos);
 
         using (SQLiteConnection connection = new SQLiteConnection(CONNECTION_STRING))
         {
@@ -231,14 +246,6 @@ public class Vila
                 this.pedra = this.pedra + addPedra;
                 this.trigo = this.trigo + addTrigo;
 
-                /*
-                updateQuery = String.Format(
-                        @"
-                            UPDATE TilesMapa
-                            SET Madeira={0}, Pedra={1}, Trigo={2}, DtUltAct=DATETIME()
-                            WHERE id={3}
-                        ", (trigo + addTrigo), (pedra + addPedra), (madeira + addMadeira), idTile);
-                */
                 break; // (if you only want the first item returned)
             }
             reader.Close();
@@ -253,6 +260,7 @@ public class Vila
             command.Parameters.AddWithValue("@Madeira", this.madeira);
             command.Parameters.AddWithValue("@Pedra", this.pedra);
             command.Parameters.AddWithValue("@Trigo", this.trigo);
+
             command.ExecuteNonQuery();
             connection.Close();
         }
@@ -260,7 +268,6 @@ public class Vila
 
     private static int GetValorAdicionar(int idTile) //TODO - Colocar parte código do AdicionaRecursos
     {
-
         return 0;
     }
 

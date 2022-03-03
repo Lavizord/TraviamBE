@@ -16,7 +16,7 @@ public class Player
     
     private string CONNECTION_STRING = Utils.ConnectionStrings.GetDBConnString();
 
-    public void LoadFromNome(string nome)//Carrega Objeto com dados da BD já existentes
+    public bool LoadFromNome(string nome) //Carrega Objeto com dados da BD já existentes
     {   
         Console.WriteLine();
         Console.WriteLine("--> Inicio LoadFrom");
@@ -37,6 +37,10 @@ public class Player
             command.Prepare();
             SQLiteDataReader reader = command.ExecuteReader();
             Console.WriteLine("      Query Returnou Valores? "+reader.HasRows.ToString());
+            if (!reader.HasRows)
+            {
+                return false;
+            }
             while (reader.Read())
             {
                 Console.WriteLine();
@@ -44,17 +48,18 @@ public class Player
                 Console.WriteLine();
                 Console.WriteLine("SELECT ID:="+(reader.GetDouble(0).ToString()));
                 this.id = (Int32)(reader.GetDouble(0));
+                this.nome = reader.GetValue(1).ToString();
                 this.CapitalX = (Int32)(reader.GetDouble(3));
                 this.CapitalY = (Int32)(reader.GetDouble(4));
-                this.nome = reader.GetValue(1).ToString();
                 this.DtCriacao = (DateTime)(reader.GetDateTime(2)); 
                 break; // (if you only want the first item returned)
             }
             reader.Close();
         }
+        return true;
     }
     
-    public void LoadFromId(int id)//Carrega Objeto com dados da BD já existentes
+    public bool LoadFromId(int id)//Carrega Objeto com dados da BD já existentes
     {   
         Console.WriteLine();
         Console.WriteLine("--> Inicio Player.LoadFromID");
@@ -74,6 +79,11 @@ public class Player
             command.Prepare();
             SQLiteDataReader reader = command.ExecuteReader();
             Console.WriteLine("      Query Returnou Valores? "+reader.HasRows.ToString());
+            
+            if (!reader.HasRows)
+            {
+                return false;
+            }
             while (reader.Read())
             {
                 Console.WriteLine();
@@ -90,6 +100,7 @@ public class Player
             }
             reader.Close();
         }
+        return true;
     }
 
     public void GeraCoordenada(float seed, string coordenada)//Altera CapitalX e Y do objeto para umas Novas
@@ -173,7 +184,7 @@ public class Player
         }
     }
 
-public void AtribuiTile() //Atribui tile ao Player
+    public void AtribuiTile() //Atribui tile ao Player
     {
         using (SQLiteConnection connection = new SQLiteConnection(CONNECTION_STRING))
         {

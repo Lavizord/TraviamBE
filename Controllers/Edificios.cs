@@ -30,10 +30,11 @@ public class EdificiosController : ControllerBase
 
 
     [HttpGet("Get")]
-    public IActionResult Get(String id)
+    [Produces("application/json")]
+    public IActionResult Get(int id)
     {
         edificio = new Edificio();
-        edificio.LoadFrom("id", id);
+        edificio.LoadFromId(id);
         return Ok(JsonSerializer.Serialize(edificio));
     }
 
@@ -46,11 +47,12 @@ public class EdificiosController : ControllerBase
 
 
     [HttpPatch("Cria")]
-    public IActionResult Cria(int tileId, int playerID, String nome, int x,int y)
+        [Produces("application/json")]
+    public IActionResult Cria(int tileId, int playerID, String nome, int x, int y)
     {
         edificio = new Edificio();
-        edificio.CriaEdificio(nome, tileId, playerID, x, y); 
-        return Ok();
+        edificio.CriaEdificio(nome, tileId, x, y, playerID); 
+        return Ok(JsonSerializer.Serialize(edificio));
     }
 
 }

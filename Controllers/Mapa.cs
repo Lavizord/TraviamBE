@@ -66,8 +66,8 @@ public class MapaController : ControllerBase
             for (  countY = 0; countY < yMax; countY++ ) {
                 
                 string insTileQuery = String.Format(
-                        @"INSERT INTO TilesMapa (id, TipoTile, PosX, PosY, NumTTrigo, NumTMadeira, NumTPedra, DtUltAct)
-                                VALUES ({0}, '{1}', {2}, {3}, {4}, {5}, {6}, DATETIME())
+                        @"INSERT INTO TilesMapa (id, TipoTile, PosX, PosY, NumTTrigo, NumTMadeira, NumTPedra, DtUltAct, DtAtribuicao)
+                                VALUES ({0}, '{1}', {2}, {3}, {4}, {5}, {6}, DATETIME(), DATETIME())
                         ", id, randomTiles[idT][0], countX.ToString(), countY.ToString(), randomTiles[idT][1], randomTiles[idT][2], randomTiles[idT][3]
                         ); 
                 id++;

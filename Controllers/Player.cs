@@ -34,7 +34,10 @@ public class PlayerController : ControllerBase
     public IActionResult Get(int id)
     {         
         player = new Player();
-        player.LoadFromId(id);
+        if (player.LoadFromId(id) == false)
+        {
+            return NotFound();
+        }
         Console.WriteLine();
         Console.WriteLine("->Player ID Query result: "+player.id.ToString());
         Console.WriteLine(player.DtCriacao);
@@ -48,7 +51,10 @@ public class PlayerController : ControllerBase
     public IActionResult Vilas(int id)
     {         
         player = new Player();
-        player.LoadFromId(id);
+        if (player.LoadFromId(id) == false)
+        {
+            return NotFound();
+        }
         Console.WriteLine();
         Console.WriteLine(player.nome);
         Console.WriteLine(player.DtCriacao);
@@ -60,7 +66,7 @@ public class PlayerController : ControllerBase
 
     [HttpPut("Cria")]
     [Produces("application/json")]
-    public IActionResult Cria(String nome)
+    public IActionResult Cria(String nome) //TODO: Validar se coordenada gerada já existe.
     {
         player = new Player();
         player.Init(nome);
@@ -73,10 +79,10 @@ public class PlayerController : ControllerBase
         vila.LoadFromXY(player.CapitalX, player.CapitalY);
 
         edificio  = new Edificio();
-        edificio.CriaEdificio("Centro da Vila", vila.id, player.id, 0, 0);
-        edificio.CriaEdificio("Quinta", vila.id, player.id, 2, 2);
-        edificio.CriaEdificio("Floresta", vila.id, player.id, 5, 4);
-        edificio.CriaEdificio("Pedreira", vila.id, player.id, 1, 4);
+        edificio.CriaEdificio("Centro da Vila", vila.id, 0, 0, player.id);
+        edificio.CriaEdificio("Quinta", vila.id, 2, 2, player.id);
+        edificio.CriaEdificio("Floresta", vila.id, 5, 4, player.id);
+        edificio.CriaEdificio("Pedreira", vila.id, 1, 4, player.id);
 
         //player.LoadFromInt("id", player.id); // dar reload ao player antes de o enviar.
 
