@@ -12,8 +12,8 @@ public class Player
     public Int32 CapitalY { get; set; }
     public string nome { get; set; }
     [JsonIgnore] public DateTime DtCriacao { get; set; }
-
-    //private const string CONNECTION_STRING = ConnectionStrings.CONNECTION_STRING;
+    [JsonIgnore] public List<Vila> vilas { get; set; }
+    
     private string CONNECTION_STRING = Utils.ConnectionStrings.GetDBConnString();
 
     public void LoadFromNome(string nome)//Carrega Objeto com dados da BD já existentes
@@ -52,16 +52,14 @@ public class Player
             }
             reader.Close();
         }
-
     }
     
     public void LoadFromId(int id)//Carrega Objeto com dados da BD já existentes
     {   
         Console.WriteLine();
-        Console.WriteLine("--> Inicio LoadFrom");
+        Console.WriteLine("--> Inicio Player.LoadFromID");
         Console.WriteLine();
 
-        //NOTA: Apenas preparado para dar por uma string
         using (SQLiteConnection connection = new SQLiteConnection(CONNECTION_STRING))
         {
             Console.WriteLine();
@@ -79,8 +77,9 @@ public class Player
             while (reader.Read())
             {
                 Console.WriteLine();
-                Console.WriteLine("------> READING SELECT Players");
+                Console.WriteLine("------> READING SELECT Player");
                 Console.WriteLine();
+
                 Console.WriteLine("SELECT ID:="+(reader.GetDouble(0).ToString()));
                 this.id = (Int32)(reader.GetDouble(0));
                 this.CapitalX = (Int32)(reader.GetDouble(3));
@@ -91,7 +90,6 @@ public class Player
             }
             reader.Close();
         }
-
     }
 
     public void GeraCoordenada(float seed, string coordenada)//Altera CapitalX e Y do objeto para umas Novas
@@ -175,8 +173,8 @@ public class Player
         }
     }
 
-    public void AtribuiTile() //Atribui tile ao Player
-    {       
+public void AtribuiTile() //Atribui tile ao Player
+    {
         using (SQLiteConnection connection = new SQLiteConnection(CONNECTION_STRING))
         {
             connection.Open();
@@ -184,17 +182,25 @@ public class Player
             //sql_cmd.CommandText = query;
             sql_cmd.CommandText = @" 
                     UPDATE TilesMapa 
-                    SET PlayerId = @id, Madeira = 1000, Pedra = 1000, Trigo = 1000, DtAtribuicao = DATETIME()  
+                    SET PlayerId = @id, Madeira = 1000, Pedra = 1000, Trigo = 1000, 
+                        DtAtribuicao = DATETIME(), 
+                        tipotile = 'Standard', numttrigo=3, numtmadeira=3, numtpedra=3
                     WHERE PosX = @x AND PosY = @y ";
 
             sql_cmd.Parameters.AddWithValue("@Id", this.id);
             sql_cmd.Parameters.AddWithValue("@x", this.CapitalX);
             sql_cmd.Parameters.AddWithValue("@y", this.CapitalY);
-
+            //TODO: Alterar um tile aleatório para o tipo do tile que foi removido
             sql_cmd.ExecuteNonQuery();
             connection.Close();
         }
     }
     
+    /*      NOVO CÓDIGO RELACIONADO COM VILAS   */
+    
+    public void LoadVilas() // TODO: Dar refractor á GameLogic.Vila antes de fazer isto.
+    {
+
+    }
 }
 

@@ -30,8 +30,13 @@ public class Vila
         -Após testes, qundo tiver oportunidade alterar para = ao Gamelogic.Player    
     */
 
+    /*
+        TODO: Necessário adicionar a info dos edificios, com as devidas coordenadas 
+              de forma a que Miguel possa fazer load dessa info para o ecrã 
+    */
 
-    public string UpdateVila(int x, int y)
+
+    public string UpdateVila()
     {
         // Buscar Info da Vila.
         // Buscar Edificios da Vila
@@ -43,42 +48,105 @@ public class Vila
         //       Base de dados deve conter informação para ser processada e resultar num  ou vários outputs por tipo de evento.
 
         Console.WriteLine("-> GameLogic.Vila: Inicia UpdateVila");
-        AdicionaRecurso(id);
+        AdicionaRecurso();
         Console.WriteLine("-> GameLogic.Vila: Após Adiciona Recurso");
         return GetVilaData(x, y);
     } 
 
+ /* Daqui para baixo sao funcoes antigas, estão funcionais mas tem de ser adaptadas á nova arquitetura*/
 
-    public void LoadFrom(string tipoLoad, string fieldProcurar)
+    public void LoadFromId(int id) //Carrega Objeto com dados da BD já existentes
     {
-        //NOTA: Apenas preparado para dar load pelo nome.
-        //      acrescentar maneira de dar load por outras vars.
-        string query  =  String.Format(
-        @"
-            SELECT id, TipoTile, PlayerId, PosX, PosY, Madeira, Pedra, Trigo, DtUltAct, DtAtrbuicao,
-                    NumTTrigo, NumTPedra, NumTMadeira 
-            FROM TilesMapa 
-            WHERE {0}={1}
-        ", tipoLoad, fieldProcurar);
+        Console.WriteLine();
+        Console.WriteLine("--> Inicio Vila.LoadFromID");
+        Console.WriteLine();
+        
+        using (SQLiteConnection connection = new SQLiteConnection(CONNECTION_STRING))
+        {
+            Console.WriteLine();
+            Console.WriteLine("----> USING sliteconnection");
+            Console.WriteLine();
+            string query  =  
+            @"
+                SELECT id, TipoTile, PlayerId, PosX, PosY, Madeira, Pedra, Trigo, DtUltAct, DtAtribuicao,
+                        NumTTrigo, NumTPedra, NumTMadeira 
+                FROM TilesMapa 
+                WHERE id=@id
+            ";
+
+            connection.Open();
+            SQLiteCommand command = new SQLiteCommand(query, connection);
+            command.Parameters.AddWithValue("@id", id);
+            command.Prepare();
+            SQLiteDataReader reader = command.ExecuteReader();
+             Console.WriteLine("      Query Returnou Valores? "+reader.HasRows.ToString());
+            while (reader.Read())
+            {
+                Console.WriteLine();
+                Console.WriteLine("------> READING SELECT Vila");
+                Console.WriteLine();
+
+                this.id      = (Int32)(reader.GetDouble(0));
+                this.tipo    = reader.GetString(1);
+                this.PlayerID = DbHelper.SafeGetInt(reader, 2);
+                this.x       = (Int32)(reader.GetDouble(3));
+                this.y       = (Int32)(reader.GetDouble(4)); 
+                this.madeira = DbHelper.SafeGetInt(reader, 5);
+                this.pedra   = DbHelper.SafeGetInt(reader, 6);
+                this.trigo   = DbHelper.SafeGetInt(reader, 7);
+                this.nTilesTrigo = (Int32)(reader.GetDouble(8));
+                this.nTilesMadeira = (Int32)(reader.GetDouble(9));
+                this.nTilesPedra = (Int32)(reader.GetDouble(10));
+                this.DtUltAct = (DateTime)(reader.GetDateTime(8));
+                //this.DtAtribuicao = (DateTime)(reader.GetDateTime(9));
+                break; // (if you only want the first item returned)
+            }
+            reader.Close();
+        }
+    }
+
+    public void LoadFromXY(int x, int y) //Carrega Objeto com dados da BD já existentes
+    {
+        Console.WriteLine();
+        Console.WriteLine("--> Inicio Vila.LoadFromXY");
+        Console.WriteLine();
+        
+        string query  = @" SELECT id, TipoTile, PlayerId, PosX, PosY, 
+                            Madeira, Pedra, Trigo, DtUltAct, DtAtribuicao,
+                            NumTTrigo, NumTPedra, NumTMadeira 
+                        FROM TilesMapa 
+                        WHERE PosX = @x AND PosY = @y";
 
         using (SQLiteConnection connection = new SQLiteConnection(CONNECTION_STRING))
         {
-            SQLiteCommand command = new SQLiteCommand(query, connection);
+            Console.WriteLine();
+            Console.WriteLine("----> USING sliteconnection");
+            Console.WriteLine();
             connection.Open();
+
+            SQLiteCommand command = new SQLiteCommand(query, connection);
+            command.Parameters.AddWithValue("@x", x);
+            command.Parameters.AddWithValue("@y", y);
+            command.Prepare();
             SQLiteDataReader reader = command.ExecuteReader();
+            Console.WriteLine("      Query Returnou Valores? "+reader.HasRows.ToString());
+
             while (reader.Read())
             {
+                Console.WriteLine();
+                Console.WriteLine("------> READING SELECT Players");
+                Console.WriteLine();
                 this.id      = (Int32)(reader.GetDouble(0));
                 this.tipo    = reader.GetString(1);
-                this.PlayerID = (Int32)(reader.GetDouble(2));
+                this.PlayerID = DbHelper.SafeGetInt(reader, 2);
                 this.x       = (Int32)(reader.GetDouble(3));
                 this.y       = (Int32)(reader.GetDouble(4)); 
                 this.madeira = (Int32)(reader.GetDouble(5));
                 this.pedra   = (Int32)(reader.GetDouble(6));
                 this.trigo   = (Int32)(reader.GetDouble(7));
-                this.nTilesTrigo = (Int32)(reader.GetDouble(8));
-                this.nTilesMadeira = (Int32)(reader.GetDouble(9));
-                this.nTilesPedra = (Int32)(reader.GetDouble(10));
+                this.nTilesTrigo = (Int32)(reader.GetDouble(10));
+                this.nTilesMadeira = (Int32)(reader.GetDouble(11));
+                this.nTilesPedra = (Int32)(reader.GetDouble(12));
                 this.DtUltAct = (DateTime)(reader.GetDateTime(8));
                 this.DtAtribuicao = (DateTime)(reader.GetDateTime(9));
                 break; // (if you only want the first item returned)
@@ -87,48 +155,7 @@ public class Vila
         }
     }
 
-     public void LoadFromXY(int x, int y)
-    {
-        string query  = String.Format(
-    @"
-        SELECT id, TipoTile, PlayerId, PosX, PosY, 
-               Madeira, Pedra, Trigo, DtUltAct, DtAtribuicao,
-               NumTTrigo, NumTPedra, NumTMadeira 
-        FROM TilesMapa 
-        WHERE PosX = {0} AND PosY = {1}
-    ", x, y);
-
-        using (SQLiteConnection connection = new SQLiteConnection(CONNECTION_STRING))
-        {
-            SQLiteCommand command = new SQLiteCommand(query, connection);
-            connection.Open();
-            SQLiteDataReader reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                id      = (Int32)(reader.GetDouble(0));
-                tipo    = reader.GetString(1);
-                PlayerID = (Int32)(reader.GetDouble(2));
-                x       = (Int32)(reader.GetDouble(3));
-                y       = (Int32)(reader.GetDouble(4)); 
-                madeira = (Int32)(reader.GetDouble(5));
-                pedra   = (Int32)(reader.GetDouble(6));
-                trigo   = (Int32)(reader.GetDouble(7));
-                nTilesTrigo = (Int32)(reader.GetDouble(10));
-                nTilesMadeira = (Int32)(reader.GetDouble(11));
-                nTilesPedra = (Int32)(reader.GetDouble(12));
-                DtUltAct = (DateTime)(reader.GetDateTime(8));
-                DtAtribuicao = (DateTime)(reader.GetDateTime(9));
-                break; // (if you only want the first item returned)
-            }
-            reader.Close();
-        }
-    }
-
-
-    /* Daqui para baixo sao funcoes antigas, estão funcionais mas tem de ser adaptadas á nova arquitetura*/
-
-    
-    private void AdicionaRecurso(int idTile)
+    private void AdicionaRecurso()
     {   
         string updateQuery = String.Empty;
         string querySomasRecursos = String.Format(
@@ -180,7 +207,7 @@ public class Vila
                     Edificios.isBuilding = 0 AND
                     TilesMapa.ID = {0} AND
                     Edificios.Nome = 'Floresta'
-            ) as SumMadeira", idTile);
+            ) as SumMadeira", this.id);
         Console.WriteLine("Query Recursos Atualizar:");
         Console.WriteLine(querySomasRecursos);
 
@@ -231,13 +258,11 @@ public class Vila
         }
     }
 
-
     private static int GetValorAdicionar(int idTile) //TODO - Colocar parte código do AdicionaRecursos
     {
 
         return 0;
     }
-
 
     private static int GetRecursosVila(int idTile, string recurso)
     {
@@ -265,7 +290,6 @@ public class Vila
         return valorRecurso;        
     }
    
-
     private string GetVilaData(int x, int y)
     {
         string query  =  String.Format(

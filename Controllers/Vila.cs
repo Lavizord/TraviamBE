@@ -24,13 +24,23 @@ public class VilaController : ControllerBase
     }
 
 
-    [HttpGet("Get")]
+    [HttpGet("GetByPos")]
     [Produces("application/json")]
-    public IActionResult Get(int x, int y)
+    public IActionResult GetByPos(int x, int y)
     {
         vila = new Vila();
         vila.LoadFromXY(x,y);
         Console.WriteLine("-> /Vila/Get: Após Load Vila");
-        return Ok(vila.UpdateVila(x, y));
+        return Ok(vila.UpdateVila());
+    }  
+    
+    [HttpGet("GetById")]
+    [Produces("application/json")]
+    public IActionResult GetById(int id)
+    {
+        vila = new Vila();
+        vila.LoadFromId(id);
+        Console.WriteLine("-> /Vila/Get: Após Load Vila");
+        return Ok(vila.UpdateVila());
     }  
 }

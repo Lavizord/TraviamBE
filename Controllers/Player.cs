@@ -31,10 +31,24 @@ public class PlayerController : ControllerBase
 
     [HttpGet("Get")]
     [Produces("application/json")]
-    public IActionResult Get(String nome)
+    public IActionResult Get(int id)
     {         
         player = new Player();
-        player.LoadFromNome(nome);
+        player.LoadFromId(id);
+        Console.WriteLine();
+        Console.WriteLine("->Player ID Query result: "+player.id.ToString());
+        Console.WriteLine(player.DtCriacao);
+        Console.WriteLine(JsonSerializer.Serialize(player));
+        Console.WriteLine();
+        return Ok(JsonSerializer.Serialize(player));
+    }
+
+    [HttpGet("GetVilas")]
+    [Produces("application/json")]
+    public IActionResult Vilas(int id)
+    {         
+        player = new Player();
+        player.LoadFromId(id);
         Console.WriteLine();
         Console.WriteLine(player.nome);
         Console.WriteLine(player.DtCriacao);
