@@ -4,6 +4,7 @@ using System.Linq;
 using System.Data;
 using System.Data.SQLite;
 using System.Text.Json;
+using Newtonsoft.Json;
 
 using Traviam.GameLogic;
 using Traviam.Utils;
@@ -29,7 +30,7 @@ public class PlayerController : ControllerBase
     }
 
 
-    [HttpGet("Get")]
+    [HttpGet("")]
     [Produces("application/json")]
     public IActionResult Get(int id)
     {         
@@ -41,12 +42,12 @@ public class PlayerController : ControllerBase
         Console.WriteLine();
         Console.WriteLine("->Player ID Query result: "+player.id.ToString());
         Console.WriteLine(player.DtCriacao);
-        Console.WriteLine(JsonSerializer.Serialize(player));
+        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(player));
         Console.WriteLine();
-        return Ok(JsonSerializer.Serialize(player));
+        return Ok(JsonConvert.SerializeObject(player));
     }
 
-    [HttpGet("GetVilas")]
+    [HttpGet("Vilas")]
     [Produces("application/json")]
     public IActionResult Vilas(int id)
     {         
@@ -55,12 +56,13 @@ public class PlayerController : ControllerBase
         {
             return NotFound();
         }
+        player.LoadVilas();
         Console.WriteLine();
         Console.WriteLine(player.nome);
         Console.WriteLine(player.DtCriacao);
-        Console.WriteLine(JsonSerializer.Serialize(player));
+        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(player));
         Console.WriteLine();
-        return Ok(JsonSerializer.Serialize(player));
+        return Ok(JsonConvert.SerializeObject(player.vilas));
     }
     
 
@@ -86,7 +88,7 @@ public class PlayerController : ControllerBase
 
         //player.LoadFromInt("id", player.id); // dar reload ao player antes de o enviar.
 
-        return Ok(JsonSerializer.Serialize(player));
+        return Ok(System.Text.Json.JsonSerializer.Serialize(player));
     }
 }
 

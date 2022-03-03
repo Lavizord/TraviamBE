@@ -89,7 +89,7 @@ public class MapaController : ControllerBase
     }
 
 
-    [HttpGet("Get")]
+    [HttpGet("")]
     [Produces("application/json")]
     public IActionResult Get()
     {

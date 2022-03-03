@@ -29,7 +29,7 @@ public class EdificiosController : ControllerBase
     }
 
 
-    [HttpGet("Get")]
+    [HttpGet("")]
     [Produces("application/json")]
     public IActionResult Get(int id)
     {

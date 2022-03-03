@@ -28,7 +28,7 @@ public class VilaController : ControllerBase
     }
 
 
-    [HttpGet("GetByPos")]
+    [HttpGet("XY")]
     [Produces("application/json")]
     public IActionResult GetByPos(int x, int y)
     {
@@ -39,7 +39,7 @@ public class VilaController : ControllerBase
     }  
     
 
-    [HttpGet("GetById")]
+    [HttpGet("id")]
     [Produces("application/json")]
     public IActionResult GetById(int id)
     {

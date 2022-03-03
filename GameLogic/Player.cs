@@ -12,7 +12,7 @@ public class Player
     public Int32 CapitalY { get; set; }
     public string nome { get; set; }
     [JsonIgnore] public DateTime DtCriacao { get; set; }
-    [JsonIgnore] public List<Vila> vilas { get; set; }
+    public List<Vila> vilas { get; set; }
     
     private string CONNECTION_STRING = Utils.ConnectionStrings.GetDBConnString();
 
@@ -211,7 +211,7 @@ public class Player
     
     public void LoadVilas() // TODO: Dar refractor á GameLogic.Vila antes de fazer isto.
     {
-
+        this.vilas = DbHelper.GetVilasJogador(this.id);
     }
 }
 
