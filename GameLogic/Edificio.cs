@@ -74,7 +74,7 @@ public class Edificio
                 this.custotrigo = (Int32)(reader.GetDouble(8));
                 this.customadeira = (Int32)(reader.GetDouble(9));
                 this.custopedra = (Int32)(reader.GetDouble(10));
-                this.output = (Int32)(reader.GetDouble(11));
+                this.output = DbHelper.SafeGetInt(reader, 11);
                 this.playerid = (Int32)(reader.GetDouble(12));
                 this.tileid = (Int32)(reader.GetDouble(13));
                 this.isBuilding = (reader.GetBoolean(14));

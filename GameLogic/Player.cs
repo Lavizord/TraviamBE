@@ -209,7 +209,7 @@ public class Player
     
     /*      NOVO CÓDIGO RELACIONADO COM VILAS   */
     
-    public void LoadVilas() // TODO: Dar refractor á GameLogic.Vila antes de fazer isto.
+    public void LoadVilas() 
     {
         this.vilas = DbHelper.GetVilasJogador(this.id);
     }

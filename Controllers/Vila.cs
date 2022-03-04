@@ -50,9 +50,9 @@ public class VilaController : ControllerBase
     }  
 
 
-    [HttpGet("GetBuildingTileInfo")]
+    [HttpGet("BuildingTileInfo")]
     [Produces("application/json")]
-    public IActionResult GetBuildingTileInfo(int vilaId, int posVilaX, int posVilaY)
+    public IActionResult BuildingTileInfo(int vilaId, int posVilaX, int posVilaY)
     {
         edificio = new Edificio();
         if(edificio.LoadFromIdXY(vilaId, posVilaX, posVilaY))
@@ -62,5 +62,24 @@ public class VilaController : ControllerBase
         }
         
         return  Ok(JsonSerializer.Serialize(DbHelper.GetPossiveisEdificios(vilaId, posVilaX, posVilaY)));
+    }
+
+
+    [HttpGet("Recursos")]
+    [Produces("application/json")]
+    public IActionResult Recursos(int vilaId)
+    {
+        vila = new Vila();
+        vila.LoadFromId(vilaId);
+        Console.WriteLine("-> /Vila/Get: Após Load Vila (/VILA/RECURSOS)");
+        vila.UpdateVila();
+        
+        var recursos = new 
+        {
+            madeira = vila.madeira,
+            pedra = vila.pedra,
+            trigo = vila.trigo
+        };
+        return Ok(recursos);
     }
 }

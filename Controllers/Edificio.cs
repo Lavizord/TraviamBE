@@ -39,11 +39,13 @@ public class EdificiosController : ControllerBase
     }
 
 
-    [HttpPatch("Upgrade")]
+   /* [HttpPatch("Upgrade")]
     public IActionResult Upgrade(int id)
     {
+        edificio = new Edificio();
+        
         return Ok();
-    }
+    }*/
 
 
     [HttpPatch("Cria")]
