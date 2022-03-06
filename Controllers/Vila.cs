@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Data.SQLite;
 using System.Text.Json;
+using Swashbuckle.AspNetCore.Annotations;
 
 using Traviam.Utils;
 using Traviam.GameLogic;
@@ -33,9 +34,12 @@ public class VilaController : ControllerBase
     public IActionResult GetByPos(int x, int y)
     {
         vila = new Vila();
-        vila.LoadFromXY(x,y);
-        Console.WriteLine("-> /Vila/Get: Após Load Vila");
-        return Ok(vila.UpdateVila());
+        if(vila.LoadFromXY(x,y))
+        {
+            Console.WriteLine("-> /Vila/Get: Após Load Vila");
+            return Ok(vila.UpdateVila());
+        }
+        return NotFound();
     }  
     
 
@@ -44,9 +48,11 @@ public class VilaController : ControllerBase
     public IActionResult GetById(int id)
     {
         vila = new Vila();
-        vila.LoadFromId(id);
-        Console.WriteLine("-> /Vila/Get: Após Load Vila");
-        return Ok(vila.UpdateVila());
+        if(vila.LoadFromId(id)){
+            Console.WriteLine("-> /Vila/Get: Após Load Vila");
+            return Ok(vila.UpdateVila());
+        }
+        return NotFound();
     }  
 
 
@@ -57,7 +63,7 @@ public class VilaController : ControllerBase
         edificio = new Edificio();
         if(edificio.LoadFromIdXY(vilaId, posVilaX, posVilaY))
         {
-            Console.WriteLine(":::: Foi Encontrado um edificios.");
+           Console.WriteLine(":::: Foi Encontrado um edificios.");
            return Ok(edificio);
         }
         

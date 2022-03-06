@@ -1,0 +1,23 @@
+## https://www.makeuseof.com/docker-image-dot-net-web-api/
+#
+## BUILD THE DOCKER IMAGE
+
+    docker build -t traviam-image -f Dockerfile .
+
+## VIEW DOCKER IMAGES
+    
+    docker images
+
+#
+## RUNNING THE DOCKER IMAGE TO DOCKER CONTAINER 
+#
+#   Also, the command specifies that the Docker container 
+#   should run on the HTTP port 8080, which maps to port 80 
+#   inside the contianer.
+
+    docker run -ti --rm -p 8080:80 traviam-image
+
+
+
+## Guia para dar push para o docker hub
+#    https://www.pluralsight.com/guides/create-docker-images-docker-hub

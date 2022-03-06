@@ -12,7 +12,7 @@ public class Edificio
     public string nome { get; set; }
     public string descricao { get; set; } 
     public Int32 level { get; set; } 
-    public Int32 popmax { get; set; }
+    public Int32 popmax { get; set; }   // não está a ser usado 
     public Int32 hp { get; set; } 
     public Int32 custotrigo { get; set; } 
     public Int32 customadeira { get; set; } 
@@ -25,131 +25,28 @@ public class Edificio
     public Int32 posVilaX { get; set; }
     public Int32 posVilaY { get; set; }
 
-    [JsonIgnore] public DateTime DtUpgrade { get; set; } 
+    public DateTime DtUpgrade { get; set; } 
 
     [JsonIgnore] public DateTime DtCriacao { get; set; } 
 
     public bool LoadFromId(int id) 
     {
-        Console.WriteLine();
-        Console.WriteLine("--> Inicio Edificio.LoadFromID");
-        Console.WriteLine();
-     
-
-        using (SQLiteConnection connection = new SQLiteConnection(CONNECTION_STRING))
-        {
-            Console.WriteLine();
-            Console.WriteLine("----> USING sliteconnection");
-            Console.WriteLine();
-            
-            string query  =  
-            @"
-                SELECT Edificios.Id, Edificios.Nome, Edificios.Descricao, Edificios.DtCriacao, 
-                        Edificios.Level, EdificiosLevel.PopMax, Edificios.Hp, Edificios.DtUpgrade,
-                        Edificios.CustoTrigo, Edificios.CustoMadeira, Edificios.CustoPedra, EdificiosLevel.Output,
-                        Edificios.PlayerId, Edificios.TileID, Edificios.isBuilding, Edificios.PosTileX, Edificios.PosTileY
-                FROM Edificios 
-                LEFT JOIN EdificiosLevel on EdificiosLevel.Nome=Edificios.Nome and EdificiosLevel.Level=Edificios.Level 
-                WHERE id=@id
-            ";
-            connection.Open();
-            SQLiteCommand command = new SQLiteCommand(query, connection);
-            command.Parameters.AddWithValue("@id", id);
-            command.Prepare();
-            SQLiteDataReader reader = command.ExecuteReader();
-            Console.WriteLine("      Query Returnou Valores? "+reader.HasRows.ToString());
-            if (!reader.HasRows)
-            {
-                return false;
-            }
-            while (reader.Read())
-            {
-                this.id = (Int32)(reader.GetDouble(0));
-                this.nome = reader.GetValue(1).ToString();
-                this.descricao = reader.GetValue(2).ToString();
-                this.level = (Int32)(reader.GetDouble(4));
-                this.popmax = (Int32)(reader.GetDouble(5));
-                this.hp = (Int32)(reader.GetDouble(6));
-                this.DtUpgrade = (DateTime)(reader.GetDateTime(7)); 
-                this.custotrigo = (Int32)(reader.GetDouble(8));
-                this.customadeira = (Int32)(reader.GetDouble(9));
-                this.custopedra = (Int32)(reader.GetDouble(10));
-                this.output = DbHelper.SafeGetInt(reader, 11);
-                this.playerid = (Int32)(reader.GetDouble(12));
-                this.tileid = (Int32)(reader.GetDouble(13));
-                this.isBuilding = (reader.GetBoolean(14));
-                this.posVilaX = (Int32)(reader.GetDouble(15));
-                this.posVilaY = (Int32)(reader.GetDouble(16));
-                break; // (if you only want the first item returned)
-            }
-            reader.Close();
-        }
-        return true;
+        string where = String.Format(@"Edificios.Id={0}", id);
+        return DbHelper.SafeLoadEdificio(this, where); 
     }
 
     public bool LoadFromIdXY(int id, int x, int y) 
     {
-        Console.WriteLine();
-        Console.WriteLine("--> Inicio Edificio.LoadFromIdXY");
-        Console.WriteLine();
-     
-        using (SQLiteConnection connection = new SQLiteConnection(CONNECTION_STRING))
-        {
-            Console.WriteLine();
-            Console.WriteLine("----> USING sliteconnection");
-            Console.WriteLine();
-            
-            string query  =  
-            @"
-                SELECT Edificios.Id, Edificios.Nome, Edificios.Descricao, Edificios.DtCriacao, 
-                        Edificios.Level, EdificiosLevel.PopMax, Edificios.Hp, Edificios.DtUpgrade,
-                        Edificios.CustoTrigo, Edificios.CustoMadeira, Edificios.CustoPedra, EdificiosLevel.Output,
-                        Edificios.PlayerId, Edificios.TileID, Edificios.isBuilding, Edificios.PosTileX, Edificios.PosTileY
-                FROM Edificios 
-                LEFT JOIN EdificiosLevel on EdificiosLevel.Nome=Edificios.Nome and EdificiosLevel.Level=Edificios.Level 
-                WHERE Edificios.TileID=@id and edificios.PosTileX = @x and edificios.PosTileY = @y
-            ";
-            connection.Open();
-            SQLiteCommand command = new SQLiteCommand(query, connection);
-            command.Parameters.AddWithValue("@id", id);
-            command.Parameters.AddWithValue("@x", x);
-            command.Parameters.AddWithValue("@y", y);
-            command.Prepare();
-            SQLiteDataReader reader = command.ExecuteReader();
-            Console.WriteLine("      Query Returnou Valores? "+reader.HasRows.ToString());
-            if (!reader.HasRows)
-            {
-                return false;
-            }
-            while (reader.Read())
-            {
-                this.id = (Int32)(reader.GetDouble(0));
-                this.nome = reader.GetValue(1).ToString();
-                this.descricao = reader.GetValue(2).ToString();
-                this.level = (Int32)(reader.GetDouble(4));
-                this.popmax = DbHelper.SafeGetInt(reader,5);
-                this.hp = (Int32)(reader.GetDouble(6));
-                this.DtUpgrade = (DateTime)(reader.GetDateTime(7)); 
-                this.custotrigo = (Int32)(reader.GetDouble(8));
-                this.customadeira = (Int32)(reader.GetDouble(9));
-                this.custopedra = (Int32)(reader.GetDouble(10));
-                this.output = (Int32)(reader.GetDouble(11));
-                this.playerid = (Int32)(reader.GetDouble(12));
-                this.tileid = (Int32)(reader.GetDouble(13));
-                this.isBuilding = (reader.GetBoolean(14));
-                this.posVilaX = (Int32)(reader.GetDouble(15));
-                this.posVilaY = (Int32)(reader.GetDouble(16));
-                break; // (if you only want the first item returned)
-            }
-            reader.Close();
-        }
-        return true;
+        string where = String.Format(@"Edificios.TileID={0} AND 
+                                        edificios.PosTileX = {1} AND 
+                                        edificios.PosTileY = {2}", id,x,y);
+        return DbHelper.SafeLoadEdificio(this, where); 
     }
 
-    public void CriaEdificio(string nome, int tileID, int posX, int posY, int playerid=0, bool flagGrava=true)
+    public void CriaEdificio(string nome, int tileID, int posX, int posY, int level, int playerid=0, bool flagGrava=true)
     {
         this.id = GeraId();   
-        this.level = 1; 
+        this.level = level; 
         
         nome = '"'+nome+'"';
 
@@ -158,8 +55,8 @@ public class Edificio
             SELECT nome, hp, UpTimeMin, CustoTrigo, 
                    CustoMadeira, CustoPedra, Output, PopMax, Descricao, DATETIME() 
             FROM EdificiosLevel 
-            WHERE nome={0} and level = 1
-        ", nome);
+            WHERE nome={0} and level = {1}
+        ", nome, this.level);
 
         Console.WriteLine(query);
 
@@ -238,26 +135,58 @@ public class Edificio
 
     }
 
-    private void Update()
+    private void UpdateDados()
     {
-        string query  =  String.Format(
-                @"
-                ", this.id, this.nome, this.descricao, this.level, this.popmax, this.hp, this.custotrigo,
-                this.customadeira, this.custopedra, this.playerid, this.tileid);
-
-        Console.WriteLine(query);
-
         using (SQLiteConnection connection = new SQLiteConnection(CONNECTION_STRING))
         {
             connection.Open();
             SQLiteCommand sql_cmd = connection.CreateCommand();
-            sql_cmd.CommandText = query;
+            sql_cmd.CommandText = @" UPDATE Edificios SET 
+                                    Nome=@nome, Descricao=@desc, level=@level, hp=@hp, 
+                                    DtUpgrade=@dtup, custoTrigo=@ctrigo, custoMadeira = @cmadeira,
+                                    custoPedra = @cpedra, isBuilding=@isbuilding, PlayerId=@pid, 
+                                    PosTileX =@x, PosTileY = @y
+                                    WHERE id=@id";
+
+            sql_cmd.Parameters.AddWithValue("@id", this.id);
+            sql_cmd.Parameters.AddWithValue("@nome", this.nome);
+            sql_cmd.Parameters.AddWithValue("@desc", this.descricao);
+            sql_cmd.Parameters.AddWithValue("@level", this.level);
+            sql_cmd.Parameters.AddWithValue("@hp", this.hp);
+            sql_cmd.Parameters.AddWithValue("@dtup", this.DtUpgrade);
+            sql_cmd.Parameters.AddWithValue("@ctrigo", this.custotrigo);
+            sql_cmd.Parameters.AddWithValue("@cmadeira", this.customadeira);
+            sql_cmd.Parameters.AddWithValue("@cpedra", this.custopedra);
+            sql_cmd.Parameters.AddWithValue("@isbuilding", this.isBuilding);
+            sql_cmd.Parameters.AddWithValue("@pid", this.playerid);
+            sql_cmd.Parameters.AddWithValue("@x", this.posVilaX);
+            sql_cmd.Parameters.AddWithValue("@y", this.posVilaY);
+            sql_cmd.Prepare();
             sql_cmd.ExecuteNonQuery();
             connection.Close();
         }
-
     }
 
+    public bool Upgrade() // Verfifica se vila tem recursos suficiente para fazer upgrade do edificio.
+    {
+        Vila vila = new Vila();
+        vila.LoadFromId(this.tileid);
+        Edificio edificio = new Edificio();
+        int upgradeLvl = this.level + 1;
+        edificio.CriaEdificio(this.nome, this.tileid, this.posVilaX, this.posVilaY,  upgradeLvl, this.playerid, flagGrava:false);
+        Console.WriteLine("Edificio criado no upgrade: {0}, level:{1}, custoMadeira: {2}, custoPedra: {3}, , custoTrigo: {4}",
+                                                 edificio.nome, edificio.level, edificio.customadeira, edificio.custopedra, edificio.custotrigo);
+        if(vila.madeira - edificio.customadeira > 0 && vila.pedra - edificio.custopedra > 0 && vila.trigo - edificio.custotrigo > 0 ){
+            Console.WriteLine("Recursos Suficientes para Upgrade!");
+            edificio.DtUpgrade = DateTime.Now.AddMinutes(edificio.level*10);
+            edificio.isBuilding = true;
+            Console.WriteLine("Data de fim de Ugrade: {0}, isBuilding:", edificio.DtUpgrade, edificio.isBuilding);
+            edificio.id = this.id;
+            edificio.UpdateDados();
+            return true;
+        }
+        return false;
+    }
     private static int GeraId()
     {
         string cntQuery  = 
@@ -284,5 +213,6 @@ public class Edificio
         //Console.WriteLine(id);
         return id;
     }
+
 
 }

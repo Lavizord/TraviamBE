@@ -11,6 +11,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.0-preview.1.22076.6" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.2.3" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.115.5" />
   </ItemGroup>
 

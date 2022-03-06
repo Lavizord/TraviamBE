@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SQLite;
 using System.Text.Json;
 using Newtonsoft.Json;
+using Swashbuckle.AspNetCore.Annotations;
 
 using Traviam.GameLogic;
 using Traviam.Utils;
@@ -30,8 +31,10 @@ public class PlayerController : ControllerBase
     }
 
 
+
     [HttpGet("")]
     [Produces("application/json")]
+    [SwaggerOperation(Summary = "Retorna JSON com info do Jogador.", Description = "Retorna JSON construido com base no ID passado, não inclui as vilas do jogador.")]   
     public IActionResult Get(int id)
     {         
         player = new Player();
@@ -47,8 +50,10 @@ public class PlayerController : ControllerBase
         return Ok(JsonConvert.SerializeObject(player));
     }
 
+
     [HttpGet("Vilas")]
     [Produces("application/json")]
+    [SwaggerOperation(Summary = "Retorna JSON com lista de vilas do Jogador.", Description = "Retorna JSON construido com base no ID do jogador passado, recursos de todas as vilas são atualizados e gravados.")]
     public IActionResult Vilas(int id)
     {         
         player = new Player();
@@ -66,14 +71,15 @@ public class PlayerController : ControllerBase
     }
     
 
-    [HttpPut("Cria")]
+    [HttpPost("Cria")]
     [Produces("application/json")]
+    [SwaggerOperation(Summary = "Cria um novo jogador com o nome passado.", Description = "É atribuido um ID, o jogador é inicializado com uma vila, edificios e recursos.")]
     public IActionResult Cria(String nome) //TODO: Validar se coordenada gerada já existe.
     {
         player = new Player();
         player.Init(nome);
-        player.GeraCoordenada(1f, "x");
-        player.GeraCoordenada(1f, "y");
+        player.GeraCoordenada(2f, "x"); //O gera coordenadas tem de passar para o Método INIT do player
+        player.GeraCoordenada(2f, "y"); // de forma a ser mais fácil de detetar as posições dos jogadores.
         player.GravaDados();
         player.AtribuiTile();
 
@@ -81,10 +87,10 @@ public class PlayerController : ControllerBase
         vila.LoadFromXY(player.CapitalX, player.CapitalY);
 
         edificio  = new Edificio();
-        edificio.CriaEdificio("Centro da Vila", vila.id, 0, 0, player.id);
-        edificio.CriaEdificio("Quinta", vila.id, 2, 2, player.id);
-        edificio.CriaEdificio("Floresta", vila.id, 5, 4, player.id);
-        edificio.CriaEdificio("Pedreira", vila.id, 1, 4, player.id);
+        edificio.CriaEdificio("Centro da Vila", vila.id, 0, 0, 1, player.id);
+        edificio.CriaEdificio("Quinta", vila.id, 2, 2, 1, player.id);
+        edificio.CriaEdificio("Floresta", vila.id, 5, 4, 1, player.id);
+        edificio.CriaEdificio("Pedreira", vila.id, 1, 4, 1, player.id);
 
         //player.LoadFromInt("id", player.id); // dar reload ao player antes de o enviar.
 
