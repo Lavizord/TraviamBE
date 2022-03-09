@@ -88,13 +88,10 @@ public static class DbHelper
     {
         Console.WriteLine();
         Console.WriteLine("--> DbHelper.GetVilasJogador");
-        Console.WriteLine();
         List<Vila> lista = new List<Vila>();   
         using (SQLiteConnection connection = new SQLiteConnection(CONNECTION_STRING))
         {
-            Console.WriteLine();
             Console.WriteLine("----> USING sliteconnection");
-            Console.WriteLine();
             
             string query  =  @" SELECT id
                                 FROM TilesMapa
@@ -106,21 +103,23 @@ public static class DbHelper
             command.Parameters.AddWithValue("@playerid", playerid);
             command.Prepare();
             SQLiteDataReader reader = command.ExecuteReader();
+
             Console.WriteLine("      Query Returnou Valores? "+reader.HasRows.ToString());
+
             if (!reader.HasRows)
             {
                 Console.WriteLine(":::: Não Existem aldeias de Jogador");
                 return lista; 
             }
+            Vila vila = new Vila();
             while (reader.Read())
             {
-                Vila vila = new Vila();
                 vila.LoadFromId(reader.GetInt32(0));
-                vila.UpdateVila();
-                Console.WriteLine(":::: Adicionao uma vila á lista.");
-                lista.Add(vila);
             }
             reader.Close();
+            vila.UpdateVila();
+            Console.WriteLine(":::: Adicionao uma vila á lista.");
+            lista.Add(vila);
         }
         Console.WriteLine(":::: Retorno final da lista de vilas.");
         return lista;

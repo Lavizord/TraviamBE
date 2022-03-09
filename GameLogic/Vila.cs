@@ -47,10 +47,10 @@ public class Vila
         //
         //       Base de dados deve conter informação para ser processada e resultar num  ou vários outputs por tipo de evento.
 
-        Console.WriteLine("-> GameLogic.Vila: Inicia UpdateVila");
+        Console.WriteLine("::::--> GameLogic.Vila: Inicia UpdateVila");
         this.AdicionaRecurso();
         this.UpdateDados();
-        Console.WriteLine("-> GameLogic.Vila: Após Adiciona Recurso");
+        Console.WriteLine("-> GameLogic.Vila: Após Adiciona Recurso/UpdateDados");
         return GetVilaData(x, y);
     } 
 
@@ -83,6 +83,7 @@ public class Vila
 
     public void UpdateDados() //Faz o update da vila, tendo sido o obj previament carregado.
     {
+        Console.WriteLine("::::--> GameLogic.Vila: Inicia UpdateDados");
         using (SQLiteConnection connection = new SQLiteConnection(CONNECTION_STRING))
         {
             connection.Open();
@@ -120,6 +121,7 @@ public class Vila
 
     private void AdicionaRecurso()
     {   
+        Console.WriteLine("::::--> GameLogic.Vila: Inicia AdicionaRecursos");
         string updateQuery = String.Empty;
         string querySomasRecursos = String.Format(
             @"

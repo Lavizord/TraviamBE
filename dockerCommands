@@ -16,6 +16,7 @@
 #   inside the contianer.
 
     docker run -ti --rm -p 8080:80 traviam-image
+    docker run -d -p 8080:80 --name traviam-image traviam-image
 
 
 
