@@ -173,3 +173,6 @@ C:\Projetos\Traviam\obj\Debug\net6.0\Traviam.dll
 C:\Projetos\Traviam\obj\Debug\net6.0\ref\Traviam.dll
 C:\Projetos\Traviam\obj\Debug\net6.0\Traviam.pdb
 C:\Projetos\Traviam\obj\Debug\net6.0\Traviam.genruntimeconfig.cache
+C:\Projetos\Traviam\bin\Debug\net6.0\Swashbuckle.AspNetCore.Annotations.dll
+C:\Projetos\Traviam\bin\Debug\net6.0\Database\TraviamDB.db
+C:\Projetos\Traviam\bin\Debug\net6.0\Database\TraviamDB.sqbpro

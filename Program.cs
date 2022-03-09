@@ -7,15 +7,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
+builder.Services.AddSwaggerGen(c =>{c.EnableAnnotations();});
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
     {
-        Version = "v1",
-        Title = "ToDo API",
-        Description = "An ASP.NET Core Web API for managing ToDo items",
+        Version = "v0.3",
+        Title = "Traviam API",
+        Description = "An ASP.NET Core Web API.",
         Contact = new OpenApiContact
         {
             Name = "Example Contact",
@@ -25,20 +24,20 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 
+
 var app = builder.Build();
 
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
-app.UseSwaggerUI(options =>
+app.UseSwagger();
+app.UseSwaggerUI();
+app.UseDeveloperExceptionPage();
+// Enable middleware to serve generated Swagger as a JSON endpoint.
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
-    options.RoutePrefix = string.Empty;
+    c.SwaggerEndpoint("v1/swagger.json", "MyAPI V1");
 });
 
 app.UseCors(x => x.AllowAnyHeader()

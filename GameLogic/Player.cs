@@ -18,89 +18,14 @@ public class Player
 
     public bool LoadFromNome(string nome) //Carrega Objeto com dados da BD já existentes
     {   
-        Console.WriteLine();
-        Console.WriteLine("--> Inicio LoadFrom");
-        Console.WriteLine();
-
-        //NOTA: Apenas preparado para dar por uma string
-        using (SQLiteConnection connection = new SQLiteConnection(CONNECTION_STRING))
-        {
-            Console.WriteLine();
-            Console.WriteLine("----> USING sliteconnection");
-            Console.WriteLine();
-            string query = @"SELECT id, nome, DtCriacao, CapitalX, CapitalY
-                                    FROM Players 
-                                    WHERE nome = @valuestring;";
-            connection.Open();
-            SQLiteCommand command = new SQLiteCommand(query, connection);
-            command.Parameters.AddWithValue("@valuestring", nome);
-            command.Prepare();
-            SQLiteDataReader reader = command.ExecuteReader();
-            Console.WriteLine("      Query Returnou Valores? "+reader.HasRows.ToString());
-            if (!reader.HasRows)
-            {
-                return false;
-            }
-            while (reader.Read())
-            {
-                Console.WriteLine();
-                Console.WriteLine("------> READING SELECT Players");
-                Console.WriteLine();
-                Console.WriteLine("SELECT ID:="+(reader.GetDouble(0).ToString()));
-                this.id = (Int32)(reader.GetDouble(0));
-                this.nome = reader.GetValue(1).ToString();
-                this.CapitalX = (Int32)(reader.GetDouble(3));
-                this.CapitalY = (Int32)(reader.GetDouble(4));
-                this.DtCriacao = (DateTime)(reader.GetDateTime(2)); 
-                break; // (if you only want the first item returned)
-            }
-            reader.Close();
-        }
-        return true;
+        string where = String.Format("nome = {0}", nome);
+        return DbHelper.SafeLoadPlayer(this, where);
     }
-    
+   
     public bool LoadFromId(int id)//Carrega Objeto com dados da BD já existentes
     {   
-        Console.WriteLine();
-        Console.WriteLine("--> Inicio Player.LoadFromID");
-        Console.WriteLine();
-
-        using (SQLiteConnection connection = new SQLiteConnection(CONNECTION_STRING))
-        {
-            Console.WriteLine();
-            Console.WriteLine("----> USING sliteconnection");
-            Console.WriteLine();
-            string query = @"SELECT id, nome, DtCriacao, CapitalX, CapitalY
-                                    FROM Players 
-                                    WHERE id = @id;";
-            connection.Open();
-            SQLiteCommand command = new SQLiteCommand(query, connection);
-            command.Parameters.AddWithValue("@id", id);
-            command.Prepare();
-            SQLiteDataReader reader = command.ExecuteReader();
-            Console.WriteLine("      Query Returnou Valores? "+reader.HasRows.ToString());
-            
-            if (!reader.HasRows)
-            {
-                return false;
-            }
-            while (reader.Read())
-            {
-                Console.WriteLine();
-                Console.WriteLine("------> READING SELECT Player");
-                Console.WriteLine();
-
-                Console.WriteLine("SELECT ID:="+(reader.GetDouble(0).ToString()));
-                this.id = (Int32)(reader.GetDouble(0));
-                this.CapitalX = (Int32)(reader.GetDouble(3));
-                this.CapitalY = (Int32)(reader.GetDouble(4));
-                this.nome = reader.GetValue(1).ToString();
-                this.DtCriacao = (DateTime)(reader.GetDateTime(2)); 
-                break; // (if you only want the first item returned)
-            }
-            reader.Close();
-        }
-        return true;
+        string where = String.Format("id = {0}", id);
+        return DbHelper.SafeLoadPlayer(this, where);
     }
 
     public void GeraCoordenada(float seed, string coordenada)//Altera CapitalX e Y do objeto para umas Novas
@@ -139,7 +64,7 @@ public class Player
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                this.id = (Int32)(reader.GetDouble(0));
+                this.id = DbHelper.SafeGetInt(reader, 0);
                 break; // (if you only want the first item returned)
             }
             reader.Close();
@@ -173,7 +98,7 @@ public class Player
             connection.Open();
             SQLiteCommand sql_cmd = connection.CreateCommand();
             sql_cmd.CommandText = @" UPDATE Players SET 
-                                    id=@id, Nome=@nome, DtCriacao=@dtcriacao, CapitalX=@capitalx, CapitalY=@capitaly)";
+                                    id=@id, Nome=@nome, DtCriacao=@dtcriacao, CapitalX=@capitalx, CapitalY=@capitaly";
             sql_cmd.Parameters.AddWithValue("@id", this.id);
             sql_cmd.Parameters.AddWithValue("@nome", this.nome);
             sql_cmd.Parameters.AddWithValue("@dtcriacao", this.DtCriacao);
@@ -186,22 +111,37 @@ public class Player
 
     public void AtribuiTile() //Atribui tile ao Player
     {
+        Console.WriteLine("::ATRIBUI TILE AO JOGADOR");
         using (SQLiteConnection connection = new SQLiteConnection(CONNECTION_STRING))
         {
             connection.Open();
+            // Vamos ter que guardar o tipo do tile que vamos substituir. 
+            Vila tileAntigo = new Vila();
+            tileAntigo.LoadFromXY(this.CapitalX, this.CapitalY);
+            if(tileAntigo.tipo != "standard")
+            {
+                Console.WriteLine(":::::::::::: TILE SWITCH");
+                Vila tileNovo =  new Vila();
+                tileNovo.LoadRandomTipo(tileAntigo.tipo);
+                tileNovo.tipo = tileAntigo.tipo;
+                tileNovo.nTilesMadeira = tileAntigo.nTilesMadeira;
+                tileNovo.nTilesPedra = tileAntigo.nTilesPedra;
+                tileNovo.nTilesTrigo = tileAntigo.nTilesTrigo;
+                tileNovo.UpdateDados();                
+            }
+            //Agora vamos dar o tile ao jogador.
             SQLiteCommand sql_cmd = connection.CreateCommand();
             //sql_cmd.CommandText = query;
             sql_cmd.CommandText = @" 
                     UPDATE TilesMapa 
                     SET PlayerId = @id, Madeira = 1000, Pedra = 1000, Trigo = 1000, 
                         DtAtribuicao = DATETIME(), 
-                        tipotile = 'Standard', numttrigo=3, numtmadeira=3, numtpedra=3
+                        tipotile = 'standard', numttrigo=3, numtmadeira=3, numtpedra=3
                     WHERE PosX = @x AND PosY = @y ";
 
             sql_cmd.Parameters.AddWithValue("@Id", this.id);
             sql_cmd.Parameters.AddWithValue("@x", this.CapitalX);
             sql_cmd.Parameters.AddWithValue("@y", this.CapitalY);
-            //TODO: Alterar um tile aleatório para o tipo do tile que foi removido
             sql_cmd.ExecuteNonQuery();
             connection.Close();
         }
@@ -209,7 +149,7 @@ public class Player
     
     /*      NOVO CÓDIGO RELACIONADO COM VILAS   */
     
-    public void LoadVilas() // TODO: Dar refractor á GameLogic.Vila antes de fazer isto.
+    public void LoadVilas() 
     {
         this.vilas = DbHelper.GetVilasJogador(this.id);
     }

@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SQLite;
 using Newtonsoft.Json;
 using System.Text.Json;
+using Swashbuckle.AspNetCore.Annotations;
 
 using Traviam.Utils;
 using Traviam.GameLogic;
@@ -29,6 +30,7 @@ public class MapaController : ControllerBase
 
 
     [HttpPost("Cria")]
+    [SwaggerOperation(Summary = "Cria mapa inicial do Jogo.", Description = "Cria mapa com X = Y = GridSize passado. Tem de ser executado uma vez no inicio de cada jogo antes da criação de jogadores.")]   
     public IActionResult  Cria(int gridSize)
     {
         Int32 numTotalTiles = gridSize * gridSize;
@@ -91,6 +93,7 @@ public class MapaController : ControllerBase
 
     [HttpGet("")]
     [Produces("application/json")]
+    [SwaggerOperation(Summary = "Retorna JSON de tiles do mapa.", Description = "Retorna uma lista completa de tiles do Mapa.")]   
     public IActionResult Get()
     {
          string query  = 
@@ -107,9 +110,12 @@ public class MapaController : ControllerBase
             SQLiteCommand command = new SQLiteCommand(query, connection);
             connection.Open();
             SQLiteDataReader reader = command.ExecuteReader();
-
+            if(!reader.HasRows)
+            {
+                return NotFound();
+            }
             JsonUtils jsonUtils = new JsonUtils();
-  
+
             var myData = new
             {
                 xMax = GameLogic.Mapa.GetMaxCoordenadas("x") + 1,
@@ -118,10 +124,10 @@ public class MapaController : ControllerBase
             };
             return new OkObjectResult(myData);
         }
-        //return OK();
     }
 
 
+    [SwaggerOperation(Summary = "Faz delete ao Mapa, aos Jogadores e aos Edificios.")]   
     [HttpDelete("LimpaJogo")]
     public IActionResult  LimpaJogo()
     {
@@ -161,7 +167,6 @@ public class MapaController : ControllerBase
             nTilesGerar--;
         }                                   
     }
-
 
 
     internal class Mapa
