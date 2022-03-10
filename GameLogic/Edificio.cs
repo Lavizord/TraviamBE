@@ -135,7 +135,7 @@ public class Edificio
 
     }
 
-    private void UpdateDados()
+    public void UpdateDados()
     {
         using (SQLiteConnection connection = new SQLiteConnection(CONNECTION_STRING))
         {
@@ -176,8 +176,9 @@ public class Edificio
         edificio.CriaEdificio(this.nome, this.tileid, this.posVilaX, this.posVilaY,  upgradeLvl, this.playerid, flagGrava:false);
         Console.WriteLine("Edificio criado no upgrade: {0}, level:{1}, custoMadeira: {2}, custoPedra: {3}, , custoTrigo: {4}",
                                                  edificio.nome, edificio.level, edificio.customadeira, edificio.custopedra, edificio.custotrigo);
-        if(vila.madeira - edificio.customadeira > 0 && vila.pedra - edificio.custopedra > 0 && vila.trigo - edificio.custotrigo > 0 ){
+        if( vila.HasResourcesToEdificio(edificio) ){
             Console.WriteLine("Recursos Suficientes para Upgrade!");
+            vila.SubtraiCustoEdi(edificio);
             edificio.DtUpgrade = DateTime.Now.AddMinutes(edificio.level*10);
             edificio.isBuilding = true;
             Console.WriteLine("Data de fim de Ugrade: {0}, isBuilding:", edificio.DtUpgrade, edificio.isBuilding);
@@ -186,6 +187,18 @@ public class Edificio
             return true;
         }
         return false;
+    }
+
+    public bool Downgrade() //TODO: Acabar isto identico ao Upgrade.
+    {
+        Vila vila = new Vila();
+        vila.LoadFromId(this.tileid);
+        Edificio edi = new Edificio();
+        int downgradeLvl = this.level - 1;
+        if( downgradeLvl < 1){
+            return false;
+        }
+        return true;     
     }
     private static int GeraId()
     {

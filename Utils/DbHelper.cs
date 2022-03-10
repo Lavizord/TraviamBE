@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Data;
 using Newtonsoft.Json;
@@ -125,45 +126,73 @@ public static class DbHelper
         return lista;
     }
 
-    public static List<Edificio> GetEdificiosVila(int vilaid) //TODO: Adaptar este código para os edificios
+    public static List<Edificio> GetEdificiosVila(int vilaid) 
     {
         Console.WriteLine();
         Console.WriteLine("--> DbHelper.GetEdificiosVila");
-        Console.WriteLine();
         List<Edificio> lista = new List<Edificio>();   
         using (SQLiteConnection connection = new SQLiteConnection(CONNECTION_STRING))
         {
-            Console.WriteLine();
-            Console.WriteLine("----> USING sliteconnection");
-            Console.WriteLine();
             
             string query  =  @" SELECT id
-                                FROM TilesMapa
-                                WHERE PlayerID = @playerid
+                                FROM Edificios
+                                WHERE TileID = @tileid
                             ";
 
             connection.Open();
             SQLiteCommand command = new SQLiteCommand(query, connection);
-            command.Parameters.AddWithValue("@playerid", vilaid);
+            command.Parameters.AddWithValue("@tileid", vilaid);
             command.Prepare();
             SQLiteDataReader reader = command.ExecuteReader();
             Console.WriteLine("      Query Returnou Valores? "+reader.HasRows.ToString());
             if (!reader.HasRows)
             {
-                Console.WriteLine(":::: Não Existem aldeias de Jogador");
+                Console.WriteLine(":::: Não Existem Edificios do Jogador");
                 return lista; 
             }
             while (reader.Read())
             {
                 //Vila vila = new Vila();
+                Edificio edificio = new Edificio();
                 //vila.LoadFromId(reader.GetInt32(0));
+                edificio.LoadFromId(reader.GetInt32(0));
                 //vila.UpdateVila();
-                //Console.WriteLine(":::: Adicionao uma vila á lista.");
-                //lista.Add(vila);
+                Console.WriteLine(":::: Adicionao um edificios á lista.");
+                lista.Add(edificio);
             }
             reader.Close();
         }
-        Console.WriteLine(":::: Retorno final da lista de vilas.");
+        Console.WriteLine(":::: Retorno final da lista de edificios.");
+        return lista;
+    }
+
+    public static List<Evento> GetEventosJogador(int playerid)
+    {
+        List<Evento> lista = new List<Evento>();
+        using (SQLiteConnection connection = new SQLiteConnection(CONNECTION_STRING))
+        {
+            string query = @"Select ID FROM eventos WHERE Eventos.PlayerId = @id";
+            connection.Open();
+            SQLiteCommand command = new SQLiteCommand(query, connection);
+            command.Parameters.AddWithValue("@id", playerid);
+            command.Prepare();
+            SQLiteDataReader reader = command.ExecuteReader();
+            Console.WriteLine("      Query Returnou Valores? "+reader.HasRows.ToString());
+            if (!reader.HasRows)
+            {
+                Console.WriteLine(":::: Não Existem Eventos do Jogador");
+                return lista; 
+            }
+            while (reader.Read())
+            {
+                Evento even = new Evento();
+                even.LoadFromId(reader.GetInt32(0));
+                Console.WriteLine(":::: Adicionao um Evento á lista.");
+                lista.Add(even);
+            }
+            reader.Close();
+        }
+        Console.WriteLine(":::: Retorno final da lista de Eventos.");
         return lista;
     }
 

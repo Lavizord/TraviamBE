@@ -32,8 +32,10 @@ public class EdificiosController : ControllerBase
 
     [HttpGet("")]
     [Produces("application/json")]
+    [SwaggerOperation(Summary = "Retorna JSON com info do Edificio.", Description = "Com base no ID fornecido retorna info do edificio.")]
     public IActionResult Get(int id)
-    {
+    {  
+        // TODO: Atualizar o edificios? (tempo de construção)
         edificio = new Edificio();
         edificio.LoadFromId(id);
         return Ok(JsonSerializer.Serialize(edificio));
@@ -41,6 +43,7 @@ public class EdificiosController : ControllerBase
 
 
     [HttpPatch("Upgrade")]
+    [SwaggerOperation(Summary = "Realiza um upgrade ao Edificio.", Description = "Inicia o Upgrade de um edificio com base no id passado. Deduz os recursos a vila.")]
     public IActionResult Upgrade(int id)
     {
         edificio = new Edificio();
@@ -48,18 +51,31 @@ public class EdificiosController : ControllerBase
         if(edificio.Upgrade()){
             return Ok();
         }
-        
-        return NoContent();
+        return BadRequest() ;
     }
 
 
     [HttpPost("Cria")]
     [Produces("application/json")]
+    [SwaggerOperation(Summary = "Inicia a criação de um novo edificio.", Description = "Com base nos dados pasados incia a construção de um novo edificio lvl1.")]
     public IActionResult Cria(int tileId, int playerID, String nome, int x, int y)
     {
         edificio = new Edificio();
-        edificio.CriaEdificio(nome, tileId, x, y, 1, playerID); 
-        return Ok(JsonSerializer.Serialize(edificio));
-    }
+        vila = new Vila();
+        if(vila.LoadFromId(tileId) == false){
+            return NotFound();
+        }
 
+        vila.UpdateVila();
+        
+        if( vila.HasResourcesToEdificio(edificio)){
+            vila.SubtraiCustoEdi(edificio);
+            edificio.CriaEdificio(nome, tileId, x, y, 1, playerID, flagGrava:false);
+            edificio.isBuilding = true;
+            edificio.DtUpgrade = DateTime.Now.AddMinutes(edificio.level * 10); 
+            edificio.UpdateDados();
+            return Ok(JsonSerializer.Serialize(edificio));
+        }   
+        return BadRequest();     
+    }
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Text.Json.Serialization;
 
@@ -22,7 +23,8 @@ public class Vila
     public int nTilesPedra = 0;
     [JsonIgnore] public DateTime DtAtribuicao;
     [JsonIgnore] public DateTime DtUltAct;
-
+    public List<Edificio> edificios;    // Lista Edificios de uma vila 
+    
     /*
         TODO / NOTAS
         -Esta class foi adaptada do código do endpoint.
@@ -245,5 +247,26 @@ public class Vila
         }
     }  
 
+    public bool HasResourcesToEdificio(Edificio edi)
+    {
+        if(this.madeira - edi.customadeira >= 0 && this.pedra - edi.custopedra >= 0 && this.trigo - edi.custotrigo >= 0)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public void SubtraiCustoEdi(Edificio edi)
+    {
+        this.madeira = this.madeira - edi.customadeira;
+        this.pedra = this.pedra - edi.custopedra;
+        this.trigo = this.trigo - edi.custotrigo;
+        this.UpdateDados();
+    }
+
+    public void LoadEdificios() 
+    {
+        this.edificios = DbHelper.GetEdificiosVila(this.id);
+    }
 }
 

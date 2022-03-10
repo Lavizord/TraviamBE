@@ -1,9 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Data;
-using System.Data.SQLite;
-using System.Text.Json;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
 
