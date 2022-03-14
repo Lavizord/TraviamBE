@@ -76,7 +76,10 @@ public class VilaController : ControllerBase
     public IActionResult Recursos(int vilaId)
     {
         vila = new Vila();
-        vila.LoadFromId(vilaId);
+        if(vila.LoadFromId(vilaId)==false)
+        {
+            return NotFound();
+        }
         Console.WriteLine("-> /Vila/Get: Após Load Vila (/VILA/RECURSOS)");
         vila.UpdateVila();
         
