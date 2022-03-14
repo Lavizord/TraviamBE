@@ -181,9 +181,9 @@ public class Vila
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                int addTrigo = (Int32) reader.GetDouble(0);                
-                int addPedra = (Int32) reader.GetDouble(1);
-                int addMadeira = (Int32) reader.GetDouble(2);
+                int addTrigo = DbHelper.SafeGetInt(reader, 0);                
+                int addPedra = DbHelper.SafeGetInt(reader, 1);
+                int addMadeira = DbHelper.SafeGetInt(reader, 2);
                 this.madeira = this.madeira + addMadeira;
                 this.pedra = this.pedra + addPedra;
                 this.trigo = this.trigo + addTrigo;
